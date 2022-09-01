@@ -53,6 +53,13 @@ class Hurtlocker {
   protected $writeSequences;
 
   /**
+   * The write-sequences assigned to each worker
+   *
+   * @var
+   */
+  protected $workerWriteSequences;
+
+  /**
    * @var \HurtLocker_DB
    */
   private $db;
@@ -93,12 +100,22 @@ class Hurtlocker {
     return 0;
   }
 
-  public function useDAO(): void {
-    $this->db = new Hurtlocker_DB_DAO();
-  }
+  public function config(string $dbType, string $workerSeries): void {
+    switch (strtolower($dbType)) {
+      case 'dao':
+        $this->db = new Hurtlocker_DB_DAO();
+        break;
 
-  public function usePDO(): void {
-    $this->db = new Hurtlocker_DB_PDO();
+      case 'pdo':
+        $this->db = new Hurtlocker_DB_PDO();
+        break;
+    }
+
+    $this->workerWriteSequences = [];
+    for ($i = 0; $i < strlen($workerSeries); $i++) {
+      $this->workerWriteSequences[1 + $i] = $this->writeSequences[$workerSeries[$i]];
+    }
+
   }
 
   public function init(): void {
@@ -118,8 +135,8 @@ class Hurtlocker {
     }
   }
 
-  public function worker($workerId, $sequenceId): void {
-    $writeSeq = $this->writeSequences[$sequenceId];
+  public function worker($workerId): void {
+    $writeSeq = $this->workerWriteSequences[$workerId];
     $fieldName = "field_w{$workerId}";
 
     for ($trialId = 1; $trialId <= $this->trialCount; $trialId++) {
@@ -127,7 +144,7 @@ class Hurtlocker {
       try {
         $this->db->transact(function($trialId) use ($writeSeq, $fieldName) {
           $this->note("For trial #%d, run task \"%s\" (sequence: %s)\n", $trialId, $this->activeTask, implode(',', $writeSeq));
-          $this->updateRecords($writeSeq, [$trialId], $fieldName, "{$this->activeTask} committed");
+          $this->updateRecords($writeSeq, [$trialId], $fieldName, "{$this->activeTask} committed $fieldName");
           $this->sleep();
           return TRUE; /* Commit this unit of work */
         }, $trialId);

@@ -32,41 +32,23 @@ if [ -z "$1" -o -z "$2" ]; then
   exit 1
 fi
 
-DB_API="use$1"
+DB_API="$1"
 WORKERS="$2"
 LOGDIR="$PRJDIR/log"
 TS=$(date '+%Y-%m-%d-%H-%M-%S')
 LOG="${LOGDIR}/${1}-${WORKERS}-${TS}.log"
 REPORT="${LOGDIR}/${1}-${WORKERS}-${TS}.report"
+CONFIG="config:$DB_API:$WORKERS"
 
 ### Go
 trap "trap - SIGTERM && kill -- -$$" SIGINT SIGTERM EXIT
 mkdir -p "$LOGDIR"
 
-echo $DB_API init | do_hurtlocker 2>&1 | tee -a "$LOG"
+echo "$CONFIG init" | do_hurtlocker 2>&1 | tee -a "$LOG"
 
-case "$WORKERS" in
-  aaa)
-    echo $DB_API worker:1:a | do_hurtlocker 2>&1 | tee -a "$LOG" &
-    echo $DB_API worker:2:a | do_hurtlocker 2>&1 | tee -a "$LOG" &
-    echo $DB_API worker:3:a | do_hurtlocker 2>&1 | tee -a "$LOG" &
-    ;;
-  aab)
-    echo $DB_API worker:1:a | do_hurtlocker 2>&1 | tee -a "$LOG" &
-    echo $DB_API worker:2:a | do_hurtlocker 2>&1 | tee -a "$LOG" &
-    echo $DB_API worker:3:b | do_hurtlocker 2>&1 | tee -a "$LOG" &
-    ;;
-  abd)
-    echo $DB_API worker:1:a | do_hurtlocker 2>&1 | tee -a "$LOG" &
-    echo $DB_API worker:2:b | do_hurtlocker 2>&1 | tee -a "$LOG" &
-    echo $DB_API worker:3:d | do_hurtlocker 2>&1 | tee -a "$LOG" &
-    ;;
-  *)
-    echo "Unrecognized pattern: $WORKERS"
-    exit 1
-    ;;
-esac
-
+echo "$CONFIG worker:1" | do_hurtlocker 2>&1 | tee -a "$LOG" &
+echo "$CONFIG worker:2" | do_hurtlocker 2>&1 | tee -a "$LOG" &
+echo "$CONFIG worker:3" | do_hurtlocker 2>&1 | tee -a "$LOG" &
 wait
 
-echo $DB_API report | do_hurtlocker | tee "$REPORT"
+echo "$CONFIG report" | do_hurtlocker | tee "$REPORT"
