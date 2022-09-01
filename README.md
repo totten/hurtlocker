@@ -32,6 +32,8 @@ This takes two main parameters:
 > The worker descriptions (eg `abcd`, `dcba`) and table names ("A", "B", "C", "D") are clearly abstract.  This particular investigation is
 > not about debugging any specific deadlock -- it speaks to the general mechanics of deadlocks.
 
+When running `hurtlocker.sh`, it will spawn several worker-processes that contend to access the same records. You will see a log of how these workers run. At the end, it shows a report to present the successes and failures (exceptions/deadlocks) with a detailed list of the written data.
+
 ## Discussion
 
 A deadlock arises when you have two (or more) worker-processes with conflicting lock requirements, eg:
@@ -53,10 +55,10 @@ These are recorded in the `./log` folder.
 
 The script initializes four example tables. They are designed to make deadlocks more likely. The example tables all look the same:
 
-* `tbl_a` (`id int`, `field_w1 varchar`, `field_w2 varchar`, `field_w3 varchar`)
-* `tbl_b` (`id int`, `field_w1 varchar`, `field_w2 varchar`, `field_w3 varchar`)
-* `tbl_c` (`id int`, `field_w1 varchar`, `field_w2 varchar`, `field_w3 varchar`)
-* `tbl_d` (`id int`, `field_w1 varchar`, `field_w2 varchar`, `field_w3 varchar`)
+* `tbl_a` (`id int`, `field_w1 varchar null`, `field_w2 varchar null`, `field_w3 varchar null`)
+* `tbl_b` (`id int`, `field_w1 varchar null`, `field_w2 varchar null`, `field_w3 varchar null`)
+* `tbl_c` (`id int`, `field_w1 varchar null`, `field_w2 varchar null`, `field_w3 varchar null`)
+* `tbl_d` (`id int`, `field_w1 varchar null`, `field_w2 varchar null`, `field_w3 varchar null`)
 
 The tables are prepopulated with empty rows -- one row for each trial.
 
