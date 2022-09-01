@@ -1,5 +1,9 @@
 <?php
 
+namespace Hurtlocker;
+
+use PDO;
+
 class Hurtlocker {
 
   /**
@@ -90,7 +94,7 @@ class Hurtlocker {
         $this->{$taskFunc}(...$taskArgs);
       }
       catch (\Throwable $t) {
-        echo CRM_Core_Error::formatTextException($t);
+        echo \CRM_Core_Error::formatTextException($t);
         throw $t;
       }
       finally {
@@ -149,7 +153,7 @@ class Hurtlocker {
         $data = '';
       }
       catch (\Throwable $t) {
-        $data = CRM_Core_Error::formatTextException($t);
+        $data = \CRM_Core_Error::formatTextException($t);
         $this->note("FAILURE: In trial #%d, task \"%s\" raised exception: %s\n", $trialId, $this->activeTask, $data);
         $isOK = 0;
       }
@@ -175,7 +179,7 @@ class Hurtlocker {
     }
     $config[] = ['key' => 'db', 'value' => get_class($this->db)];
     if ($this->db instanceof Hurtlocker_DB_DAO) {
-      $dbDataObject = new ReflectionClass('DB_DataObject');
+      $dbDataObject = new \ReflectionClass('DB_DataObject');
       $config[] = ['key' => 'md5(DB_DataObject)', 'value' => md5(file_get_contents($dbDataObject->getFileName()))];
       $config[] = ['key' => 'CIVICRM_DEADLOCK_RETRIES', 'value' => CIVICRM_DEADLOCK_RETRIES];
     }
@@ -184,7 +188,7 @@ class Hurtlocker {
     $trials = array_map(
       function(array $trial) {
         $messageLines = explode("\n", $trial['message'] ?? "");
-        $trial['message'] = CRM_Utils_String::ellipsify($messageLines[0], 60);
+        $trial['message'] = \CRM_Utils_String::ellipsify($messageLines[0], 60);
         return $trial;
       },
       $this->db->queryAssoc('SELECT trial, worker, write_seq, is_ok, message FROM tbl_trials ORDER BY trial, worker')
@@ -316,7 +320,7 @@ class Hurtlocker_Table {
     $buf .= sprintf($fmt, ...$columns);
     $buf .= $hr;
     foreach ($rows as $row) {
-      $buf .= sprintf($fmt, ...array_values(CRM_Utils_Array::subset($row, $columns)));
+      $buf .= sprintf($fmt, ...array_values(\CRM_Utils_Array::subset($row, $columns)));
     }
     $buf .= $hr;
     return $buf;
@@ -338,7 +342,7 @@ class Hurtlocker_DB_DAO  implements Hurtlocker_DB {
   protected $tx = NULL;
 
   public function transact($callback, ...$args): void {
-    $tx = new CRM_Core_Transaction();
+    $tx = new \CRM_Core_Transaction();
 
     try {
       $result = $callback(...$args);
@@ -360,27 +364,27 @@ class Hurtlocker_DB_DAO  implements Hurtlocker_DB {
 
   public function execute(string $sql, array $params = []): void {
     // fprintf(STDERR, "SQL: %s %s\n", $sql, json_encode($params));
-    CRM_Core_DAO::executeQuery($sql, $params);
+    \CRM_Core_DAO::executeQuery($sql, $params);
   }
 
   public function queryValue(string $sql) {
-    return (int) CRM_Core_DAO::singleValueQuery($sql);
+    return (int) \CRM_Core_DAO::singleValueQuery($sql);
   }
 
   public function queryColumn(string $sql, string $returnColumn): array {
     $result = [];
-    foreach (CRM_Core_DAO::executeQuery($sql)->fetchGenerator() as $row) {
+    foreach (\CRM_Core_DAO::executeQuery($sql)->fetchGenerator() as $row) {
       $result[] = $row->{$returnColumn};
     }
     return $result;
   }
 
   public function queryMap(string $sql, string $keyCol, string $valueCol): array {
-    return CRM_Core_DAO::executeQuery($sql)->fetchMap($keyCol, $valueCol);
+    return \CRM_Core_DAO::executeQuery($sql)->fetchMap($keyCol, $valueCol);
   }
 
   public function queryAssoc(string $sql): array {
-    return CRM_Core_DAO::executeQuery($sql)->fetchAll();
+    return \CRM_Core_DAO::executeQuery($sql)->fetchAll();
   }
 
 }
@@ -429,7 +433,7 @@ class Hurtlocker_DB_PDO implements Hurtlocker_DB {
   }
 
   public function execute(string $sql, array $params = []): void {
-    $raw = CRM_Core_DAO::composeQuery($sql, $params);
+    $raw = \CRM_Core_DAO::composeQuery($sql, $params);
     $this->pdo->exec($raw);
   }
 
