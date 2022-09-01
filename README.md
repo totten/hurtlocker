@@ -20,7 +20,9 @@ Then run the script `hurtlocker.sh`:
 ./bin/hurtlocker.sh pdo abcd-dcba
 ```
 
-This takes two main parameters:
+`hurtlocker.sh` spawns several worker-processes that contend to access the same records. You will see a log of how these workers run. At the end, it shows a report about the successes and failures (exceptions/deadlocks) with a detailed list of the written data.
+
+The script takes two parameters:
 
 * `DB_TYPE`: Specifies how to interface with the database. Either:
     * `pdo`: Use `\PDO`. This is a more pristine representation of MySQL-PHP behavior.
@@ -32,7 +34,6 @@ This takes two main parameters:
 > The worker descriptions (eg `abcd`, `dcba`) and table names ("A", "B", "C", "D") are clearly abstract.  This particular investigation is
 > not about debugging any specific deadlock -- it speaks to the general mechanics of deadlocks.
 
-When running `hurtlocker.sh`, it will spawn several worker-processes that contend to access the same records. You will see a log of how these workers run. At the end, it shows a report to present the successes and failures (exceptions/deadlocks) with a detailed list of the written data.
 
 ## Discussion
 
@@ -96,7 +97,7 @@ see that one worker encountered a deadlock-exception.
 What was the impact of the deadlock?  Did `worker:2:dcba` write all of its data?  Or was it all rolled back?  Or did it perform a partial
 write?
 
-The answer can be in the next part of the report ("Data"), which shows the final disposition of each update:
+The answer comes in the next part of the report ("Data"), which shows the final disposition of each update:
 
 ```
 ## Data
@@ -130,5 +131,5 @@ I've included logs from a few runs on MySQL 8.0.26. Some observations:
 * Comparing DB drivers
     * `pdo-*` reports deadlocks with exceptions. You see either the entire block succeeds or the entire block fails. This is consistent with a transaction-rollback.
     * `dao-*` always reports `is_ok=1` (in its current revision of `DB_DataObject`; md5sum=20f0046845ed6551cc02cf0c44c4e8e0), even if there was deadlock. This
-      is consistent with `DB_DataObject`s single-statement retry mechanism. However, you can also see that there is missing data. This is also consistent with the
-      single-statement retry (*the main transaction was rolled back, which removed earlier writes - which are not known to this retry-agent*).
+      is consistent with `DB_DataObject`s low-level/single-statement retry mechanism. However, you can also see that there is missing data. This is also consistent with the
+      low-level/single-statement retry (*the main transaction was rolled back, which removed earlier writes - which are not known to this retry-agent*).
