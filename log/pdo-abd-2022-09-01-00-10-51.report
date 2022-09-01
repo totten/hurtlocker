@@ -1,0 +1,44 @@
+Xdebug: [Step Debug] Could not connect to debugging client. Tried: 127.0.0.1:9003 (through xdebug.client_host/xdebug.client_port) :-(
+## Configuration
++---------------+-------------------------------+
+| key           | value                         |
++---------------+-------------------------------+
+| workerSeries  | abd                           |
+| recordCount   | 10                            |
+| trialCount    | 2                             |
+| trialDuration | 4                             |
+| lockDuration  | 1.5                           |
+| db            | Hurtlocker\PdoDatabaseAdapter |
++---------------+-------------------------------+
+
+## Trials
++-------+------------+-----------------------------------+-------+--------------------------------------------------------------+
+| trial | worker     | write_seq                         | is_ok | message                                                      |
++-------+------------+-----------------------------------+-------+--------------------------------------------------------------+
+|     1 | worker:1:a | ["tbl_a","tbl_b","tbl_c","tbl_d"] |     1 |                                                              |
+|     1 | worker:2:b | ["tbl_b","tbl_a","tbl_c","tbl_d"] |     0 | PDOException: "SQLSTATE[40001]: Serialization failure: 12... |
+|     1 | worker:3:d | ["tbl_d","tbl_c","tbl_b","tbl_a"] |     0 | PDOException: "SQLSTATE[40001]: Serialization failure: 12... |
+|     2 | worker:1:a | ["tbl_a","tbl_b","tbl_c","tbl_d"] |     0 | PDOException: "SQLSTATE[40001]: Serialization failure: 12... |
+|     2 | worker:2:b | ["tbl_b","tbl_a","tbl_c","tbl_d"] |     0 | PDOException: "SQLSTATE[40001]: Serialization failure: 12... |
+|     2 | worker:3:d | ["tbl_d","tbl_c","tbl_b","tbl_a"] |     1 |                                                              |
++-------+------------+-----------------------------------+-------+--------------------------------------------------------------+
+
+## Data
++----------+-------+---------------------------------+---------------------------------+
+| field    | table | trial id#1                      | trial id#2                      |
++----------+-------+---------------------------------+---------------------------------+
+| field_w1 | tbl_a | "worker:1:a committed field_w1" | null                            |
+| field_w1 | tbl_b | "worker:1:a committed field_w1" | null                            |
+| field_w1 | tbl_c | "worker:1:a committed field_w1" | null                            |
+| field_w1 | tbl_d | "worker:1:a committed field_w1" | null                            |
+| field_w2 | tbl_a | null                            | null                            |
+| field_w2 | tbl_b | null                            | null                            |
+| field_w2 | tbl_c | null                            | null                            |
+| field_w2 | tbl_d | null                            | null                            |
+| field_w3 | tbl_a | null                            | "worker:3:d committed field_w3" |
+| field_w3 | tbl_b | null                            | "worker:3:d committed field_w3" |
+| field_w3 | tbl_c | null                            | "worker:3:d committed field_w3" |
+| field_w3 | tbl_d | null                            | "worker:3:d committed field_w3" |
++----------+-------+---------------------------------+---------------------------------+
+
+

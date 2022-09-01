@@ -1,0 +1,22 @@
+Xdebug: [Step Debug] Could not connect to debugging client. Tried: 127.0.0.1:9003 (through xdebug.client_host/xdebug.client_port) :-(
+[30660:] Initialize tables (tbl_trials)
+[30660:] Initialize tables (tbl_a,tbl_b,tbl_c,tbl_d) with 10 records
+
+Xdebug: [Step Debug] Could not connect to debugging client. Tried: 127.0.0.1:9003 (through xdebug.client_host/xdebug.client_port) :-(
+Xdebug: [Step Debug] Could not connect to debugging client. Tried: 127.0.0.1:9003 (through xdebug.client_host/xdebug.client_port) :-(
+Xdebug: [Step Debug] Could not connect to debugging client. Tried: 127.0.0.1:9003 (through xdebug.client_host/xdebug.client_port) :-(
+[30678:worker:3:b] Align for trial #1 circa 2022-09-01 00:08:12
+[30675:worker:2:a] Align for trial #1 circa 2022-09-01 00:08:12
+[30672:worker:1:a] Align for trial #1 circa 2022-09-01 00:08:12
+[30678:worker:3:b] For trial #1, run task "worker:3:b" (sequence: tbl_b,tbl_a,tbl_c,tbl_d)
+[30672:worker:1:a] For trial #1, run task "worker:1:a" (sequence: tbl_a,tbl_b,tbl_c,tbl_d)
+[30675:worker:2:a] For trial #1, run task "worker:2:a" (sequence: tbl_a,tbl_b,tbl_c,tbl_d)
+[30678:worker:3:b] Align for trial #2 circa 2022-09-01 00:08:16
+[30672:worker:1:a] Align for trial #2 circa 2022-09-01 00:08:16
+[30672:worker:1:a] For trial #2, run task "worker:1:a" (sequence: tbl_a,tbl_b,tbl_c,tbl_d)
+[30678:worker:3:b] For trial #2, run task "worker:3:b" (sequence: tbl_b,tbl_a,tbl_c,tbl_d)
+[30675:worker:2:a] Align for trial #2 circa 2022-09-01 00:08:16
+[30675:worker:2:a] For trial #2, run task "worker:2:a" (sequence: tbl_a,tbl_b,tbl_c,tbl_d)
+
+
+
