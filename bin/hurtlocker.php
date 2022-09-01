@@ -2,8 +2,6 @@
 
 namespace Hurtlocker;
 
-use PDO;
-
 require_once dirname(__DIR__) . '/vendor/autoload.php';
 
 class Hurtlocker {
@@ -67,7 +65,7 @@ class Hurtlocker {
   protected $workerSeries;
 
   /**
-   * @var \HurtLocker_DB
+   * @var DatabaseInterface
    */
   private $db;
 
@@ -110,11 +108,11 @@ class Hurtlocker {
   public function config(string $dbType, string $workerSeries): void {
     switch (strtolower($dbType)) {
       case 'dao':
-        $this->db = new Hurtlocker_DB_DAO();
+        $this->db = new DaoDatabaseAdapter();
         break;
 
       case 'pdo':
-        $this->db = new Hurtlocker_DB_PDO();
+        $this->db = new PdoDatabaseAdapter();
         break;
     }
 
@@ -180,7 +178,7 @@ class Hurtlocker {
       $config[] = ['key' => $key, 'value' => $this->{$key}];
     }
     $config[] = ['key' => 'db', 'value' => get_class($this->db)];
-    if ($this->db instanceof Hurtlocker_DB_DAO) {
+    if ($this->db instanceof DaoDatabaseAdapter) {
       $dbDataObject = new \ReflectionClass('DB_DataObject');
       $config[] = ['key' => 'md5(DB_DataObject)', 'value' => md5(file_get_contents($dbDataObject->getFileName()))];
       $config[] = ['key' => 'CIVICRM_DEADLOCK_RETRIES', 'value' => CIVICRM_DEADLOCK_RETRIES];
@@ -289,158 +287,6 @@ class Hurtlocker {
       usleep(1000 * 1000 * $this->lockDuration);
     }
   }
-}
-
-
-interface HurtLocker_DB {
-  public function transact($callback, ...$args): void;
-  public function execute(string $sql, array $params = []): void;
-  public function queryValue(string $sql);
-  public function queryColumn(string $sql, string $returnColumn): array;
-  public function queryMap(string $sql, string $keyCol, string $valueCol): array;
-  public function queryAssoc(string $sql): array;
-}
-
-class Hurtlocker_DB_DAO  implements Hurtlocker_DB {
-
-  protected $tx = NULL;
-
-  public function transact($callback, ...$args): void {
-    $tx = new \CRM_Core_Transaction();
-
-    try {
-      $result = $callback(...$args);
-    }
-    catch (\Throwable $t) {
-      $tx->rollback();
-      throw $t;
-    }
-
-    if ($result !== TRUE && $result !== FALSE) {
-      throw new \RuntimeException("Error: transact() callback should indicate TRUE or FALSE");
-    }
-
-    if ($result === FALSE) {
-      $tx->rollback();
-    }
-    $tx->commit();
-  }
-
-  public function execute(string $sql, array $params = []): void {
-    // fprintf(STDERR, "SQL: %s %s\n", $sql, json_encode($params));
-    \CRM_Core_DAO::executeQuery($sql, $params);
-  }
-
-  public function queryValue(string $sql) {
-    return (int) \CRM_Core_DAO::singleValueQuery($sql);
-  }
-
-  public function queryColumn(string $sql, string $returnColumn): array {
-    $result = [];
-    foreach (\CRM_Core_DAO::executeQuery($sql)->fetchGenerator() as $row) {
-      $result[] = $row->{$returnColumn};
-    }
-    return $result;
-  }
-
-  public function queryMap(string $sql, string $keyCol, string $valueCol): array {
-    return \CRM_Core_DAO::executeQuery($sql)->fetchMap($keyCol, $valueCol);
-  }
-
-  public function queryAssoc(string $sql): array {
-    return \CRM_Core_DAO::executeQuery($sql)->fetchAll();
-  }
-
-}
-
-class Hurtlocker_DB_PDO implements Hurtlocker_DB {
-
-  /**
-   * @var \PDO
-   */
-  protected $pdo;
-
-  public function __construct() {
-    $dsninfo = \Civi\Test::dsn();
-
-    $host = $dsninfo['hostspec'];
-    $port = @$dsninfo['port'];
-    $pdoDsn = "mysql:host={$host}" . ($port ? ";port=$port" : "") . ';dbname=' . $dsninfo['database'];
-    $this->pdo = new PDO($pdoDsn, $dsninfo['username'], $dsninfo['password'], [
-      PDO::MYSQL_ATTR_USE_BUFFERED_QUERY => TRUE,
-      PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
-      PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
-    ]);
-  }
-
-  public function transact($callback, ...$args): void {
-    $this->pdo->exec('BEGIN');
-
-    try {
-      $result = $callback(...$args);
-    }
-    catch (\Throwable $t) {
-      $this->pdo->exec('ROLLBACK');
-      throw $t;
-    }
-
-    if ($result !== TRUE && $result !== FALSE) {
-      throw new \RuntimeException("Error: transact() callback should indicate TRUE or FALSE");
-    }
-
-    if ($result === FALSE) {
-      $this->pdo->exec('ROLLBACK');
-    }
-    else {
-      $this->pdo->exec('COMMIT');
-    }
-  }
-
-  public function execute(string $sql, array $params = []): void {
-    $raw = \CRM_Core_DAO::composeQuery($sql, $params);
-    $this->pdo->exec($raw);
-  }
-
-  public function queryValue(string $sql) {
-    $query = $this->pdo->query($sql);
-    $query->execute();
-    foreach ($query as $row) {
-      foreach ($row as $key => $value) {
-        return $value;
-      }
-    }
-  }
-
-  public function queryColumn(string $sql, string $returnColumn): array {
-    $query = $this->pdo->query($sql);
-    $query->execute();
-    $results = [];
-    foreach ($query as $row) {
-      $results[] = $row[$returnColumn];
-    }
-    return $results;
-  }
-
-  public function queryMap(string $sql, string $keyCol, string $valueCol): array {
-    $query = $this->pdo->query($sql);
-    $query->execute();
-    $results = [];
-    foreach ($query as $row) {
-      $results[$row[$keyCol]] = $row[$valueCol];
-    }
-    return $results;
-  }
-
-  public function queryAssoc(string $sql): array {
-    $query = $this->pdo->query($sql);
-    $query->execute();
-    $results = [];
-    foreach ($query as $row) {
-      $results[] = $row;
-    }
-    return $results;
-  }
-
 }
 
 $hl = new Hurtlocker();
