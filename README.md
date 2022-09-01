@@ -24,20 +24,20 @@ This takes two main parameters:
 
 * `DB_TYPE`: Specifies how to interface with the database. Either:
     * `pdo`: Use `\PDO`. This is a more pristine representation of MySQL-PHP behavior.
-    * `dao`: Use `\CRM_Core_DAO` and its parent `\DB_DataObject`. Depending on version/configuration, this may have some extra deadlock logic (*which is subject to review/reconsideration*).
+    * `dao`: Use `\CRM_Core_DAO` and its parent `\DB_DataObject`. This is a better representation of what Civi does. Depending on version/configuration, it may have some extra deadlock logic (*which is subject to review/reconsideration*).
 * `WORKER_LIST`: This is a hyphen-delimited list of workers, describing the updates performed by each worker. For example, let's breakdown `abcd-dcba`:
     * `abcd`: Worker #1 will perform a transaction with 4x updates (update table A; then table B; then table C; then table D).
     * `dcba`: Worker #2 will also perform a transaction with 4x updates. However, it does steps in the opposite order (update table D; then table C; then table B; then table A).
 
-> The worker descriptions (eg `abcd`, `dcba`) and table names ("A", "B", "C", "D") are clearly abstract.  This
-> particular investigation speaks to the *general* handling of deadlocks.
+> The worker descriptions (eg `abcd`, `dcba`) and table names ("A", "B", "C", "D") are clearly abstract.  This particular investigation is
+> not about debugging any specific deadlock -- it speaks to the general mechanics of deadlocks.
 
 ## Discussion
 
 A deadlock arises when you have two (or more) worker-processes with conflicting lock requirements, eg:
 
-* Worker #1 starts a transaction which updates `civicrm_contact` (A), `civicrm_email` (B), `civicrm_phone` (C), and `civicrm_cache` (D) records (in that order - ABCD).
-* Worker #2 starts a transaction which updates the same `civicrm_cache` (D), `civicrm_phone` (C), `civicrm_email` (B), and `civicrm_contact` (A)  records (in this reversed order - DCBA).
+* Worker #1 starts a transaction which updates (A) `civicrm_contact`, (B) `civicrm_email`, (C) `civicrm_phone`, and (D) `civicrm_cache` records (in that order - ABCD).
+* Worker #2 starts a transaction which updates the same (D) `civicrm_cache`, (C) `civicrm_phone`, (B) `civicrm_email`, and (A) `civicrm_contact` records (but in reversed order - DCBA).
 
 This example is ideal for provoking a deadlock -- each process has a conflicting sequence of updates.  However, it is
 not _guaranteed_ to provoke a deadlock all the time.  Deadlocks are stochastic (dependent upon the timing of each step
@@ -51,7 +51,7 @@ These are recorded in the `./log` folder.
 
 ## Reports / Logs
 
-Let us take an example:
+Let us take an example report. Each report includes a list of "Trials":
 
 ```
 ## Trials
@@ -63,11 +63,13 @@ Let us take an example:
 +-------+---------------+-------+--------------------------------------------------------------+
 ```
 
-This shows how well each worker behaved in trial #1.  Ideally, all process complete with `is_ok=1`.  However, you can
-see that one worker a deadlock exception.
+This shows how well each worker behaved in trial #1.  Ideally, all workers in the trial achieve `is_ok=1`.  However, you can
+see that one worker encountered a deadlock-exception.
 
-What was the impact of the deadlock?  Did worker:2 write all of its data?  Or was it all rolled back? 
-Or did it perform a partial write? The next part of the report ("Data") reveals the final disposition of each update:
+What was the impact of the deadlock?  Did `worker:2:dcba` write all of its data?  Or was it all rolled back?  Or did it perform a partial
+write?
+
+The answer can be in the next part of the report ("Data"), which shows the final disposition of each update:
 
 ```
 ## Data
@@ -96,10 +98,10 @@ consistent with a rollback (triggered by the deadlock).
 I've included logs from a few runs on MySQL 8.0.26. Some observations:
 
 * Comparing worker scenarios:
-    * In all samples of `abcd-abcd-abcd`, it always succeeds.
-    * In all samples of `abcd-bacd-dcba`, it always has problems (*though the manifestations shift around, as you might expect).
-* Comparing drivers
+    * In all trials of `abcd-abcd-abcd`, it succeeds (*as you might expect, given that the 3 workers agree on the write sequence*).
+    * In all trials of `abcd-bacd-dcba`, it has problems (*as you might expect, given that the starkly different write sequences*)
+* Comparing DB drivers
     * `pdo-*` reports deadlocks with exceptions. You see either the entire block succeeds or the entire block fails. This is consistent with a transaction-rollback.
-    * `dao-*` (in its current revision of `DB_DataObject`; md5sum=20f0046845ed6551cc02cf0c44c4e8e0) always reports `is_ok=1`. However, it suffers from broken data.
-      This is consistent with combining MySQL's transaction-level rollback (*which reverts the earlier update*) with `DB_DataObject`'s statement-level retry (*which 
-      does not retry earlier updates*).
+    * `dao-*` always reports `is_ok=1` (in its current revision of `DB_DataObject`; md5sum=20f0046845ed6551cc02cf0c44c4e8e0), even if there was deadlock. This
+      is consistent with `DB_DataObject`s single-statement retry mechanism. However, you can also see that there is missing data. This is also consistent with the
+      single-statement retry (*the main transaction was rolled back, which removed earlier writes - which are not known to this retry-agent*).
