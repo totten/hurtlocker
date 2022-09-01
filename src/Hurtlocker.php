@@ -6,7 +6,7 @@ class Hurtlocker {
   /**
    * The list of config options that describe the workers
    *
-   * @var string
+   * @var array
    *   ex: 'aab' or 'abd'
    */
   public $workerSeries;
@@ -56,25 +56,25 @@ class Hurtlocker {
   protected $activeTask = '';
 
   /**
-   * A list of known write-sequences.
-   * @var array
-   */
-  protected $writeSequences;
-
-  /**
    * @var DatabaseInterface
    */
   private $db;
 
-  public function __construct(DatabaseInterface $db, string $workerSeries) {
+  /**
+   * @param \Hurtlocker\DatabaseInterface $db
+   *   The mechanism used for interacting with the DB.
+   *   Generally a DAO or PDO adapter.
+   * @param string $workerSeries
+   *   List of workers. For example, suppose you want 3 workers:
+   *     - Worker #1: write to table A then B then C then D ('abcd')
+   *     - Worker #2: write to table B then C then D then A ('bacd')
+   *     - Worker #3: write to table D then C then B then A ('dcba')
+   *   This is condensed into a string: 'abcd-bcda-dcba'
+   */
+  public function __construct(DatabaseInterface $db, $workerSeries) {
     $this->startTime = time();
-    $this->writeSequences = [];
-    $this->writeSequences['a'] = ['tbl_a', 'tbl_b', 'tbl_c', 'tbl_d'];
-    $this->writeSequences['b'] = ['tbl_b', 'tbl_a', 'tbl_c', 'tbl_d'];
-    $this->writeSequences['c'] = ['tbl_c', 'tbl_a', 'tbl_b', 'tbl_d'];
-    $this->writeSequences['d'] = ['tbl_d', 'tbl_c', 'tbl_b', 'tbl_a'];
     $this->db = $db;
-    $this->workerSeries = $workerSeries;
+    $this->workerSeries = is_string($workerSeries) ? explode('-', $workerSeries) : $workerSeries;
   }
 
   /**
@@ -151,7 +151,12 @@ class Hurtlocker {
    *   List of SQL tables that should receive updates.
    */
   protected function getWorkerWriteSequence(int $workerId): array {
-    return $this->writeSequences[$this->workerSeries[$workerId - 1]];
+    $worker = $this->workerSeries[$workerId - 1];
+    $tables = [];
+    for ($i = 0; $i < strlen($worker); $i++) {
+      $tables[] = 'tbl_' . $worker[$i];
+    }
+    return $tables;
   }
 
   /**
@@ -160,7 +165,7 @@ class Hurtlocker {
   public function report(): void {
     $config = [];
     foreach (['workerSeries', 'recordCount', 'trialCount', 'trialDuration', 'lockDuration'] as $key) {
-      $config[] = ['key' => $key, 'value' => $this->{$key}];
+      $config[] = ['key' => $key, 'value' => json_encode($this->{$key})];
     }
     $config[] = ['key' => 'db', 'value' => get_class($this->db)];
     if ($this->db instanceof DaoDatabaseAdapter) {

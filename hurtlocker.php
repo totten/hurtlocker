@@ -7,6 +7,17 @@ use Hurtlocker\DaoDatabaseAdapter;
 use Hurtlocker\PdoDatabaseAdapter;
 // phpcs:enable
 
+/**
+ * @param string $dbType
+ *   Ex: 'pdo', 'dao'
+ * @param string $workerSeries
+ *   List of workers. For example, suppose you want 3 workers:
+ *     - Worker #1: write to table A then B then C then D ('abcd')
+ *     - Worker #2: write to table B then C then D then A ('bacd')
+ *     - Worker #3: write to table D then C then B then A ('dcba')
+ *   This is condensed into a string: 'abcd-bcda-dcba'
+ * @return \Hurtlocker\Hurtlocker
+ */
 function hurtlocker(string $dbType, string $workerSeries): \Hurtlocker\Hurtlocker {
   switch (strtolower($dbType)) {
     case 'dao':
