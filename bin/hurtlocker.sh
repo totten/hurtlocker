@@ -21,12 +21,16 @@ BINDIR=$(absdirname "$0")
 PRJDIR=$(dirname "$BINDIR")
 
 ###############################################################################
+## Utilities
+
 function do_hurtlocker() {
   #./bin/cv.phar -v scr "$BINDIR"/hurtlocker.php
-  cv -v scr "$BINDIR"/hurtlocker.php
+  echo "$CONFIG" "$@" | cv -v scr "$BINDIR"/hurtlocker.php
 }
 
 ###############################################################################
+## Load options
+
 if [ -z "$1" -o -z "$2" ]; then
   echo "usage: $0 <dbapi> <worker-config>"
   exit 1
@@ -40,15 +44,16 @@ LOG="${LOGDIR}/${1}-${WORKERS}-${TS}.log"
 REPORT="${LOGDIR}/${1}-${WORKERS}-${TS}.report"
 CONFIG="config:$DB_API:$WORKERS"
 
-### Go
+###############################################################################
+### Main
 trap "trap - SIGTERM && kill -- -$$" SIGINT SIGTERM EXIT
 mkdir -p "$LOGDIR"
 
-echo "$CONFIG init" | do_hurtlocker 2>&1 | tee -a "$LOG"
+do_hurtlocker 'init' 2>&1 | tee -a "$LOG"
 
-echo "$CONFIG worker:1" | do_hurtlocker 2>&1 | tee -a "$LOG" &
-echo "$CONFIG worker:2" | do_hurtlocker 2>&1 | tee -a "$LOG" &
-echo "$CONFIG worker:3" | do_hurtlocker 2>&1 | tee -a "$LOG" &
+do_hurtlocker 'worker:1' 2>&1 | tee -a "$LOG" &
+do_hurtlocker 'worker:2' 2>&1 | tee -a "$LOG" &
+do_hurtlocker 'worker:3' 2>&1 | tee -a "$LOG" &
 wait
 
-echo "$CONFIG report" | do_hurtlocker | tee "$REPORT"
+do_hurtlocker 'report' | tee "$REPORT"
