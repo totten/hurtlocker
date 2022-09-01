@@ -1,0 +1,46 @@
+Xdebug: [Step Debug] Could not connect to debugging client. Tried: 127.0.0.1:9003 (through xdebug.client_host/xdebug.client_port) :-(
+[33831:] Initialize tables (tbl_trials)
+[33831:] Initialize tables (tbl_a,tbl_b,tbl_c,tbl_d) with 10 records
+
+Xdebug: [Step Debug] Could not connect to debugging client. Tried: 127.0.0.1:9003 (through xdebug.client_host/xdebug.client_port) :-(
+Xdebug: [Step Debug] Could not connect to debugging client. Tried: 127.0.0.1:9003 (through xdebug.client_host/xdebug.client_port) :-(
+Xdebug: [Step Debug] Could not connect to debugging client. Tried: 127.0.0.1:9003 (through xdebug.client_host/xdebug.client_port) :-(
+[33846:worker:2:abcd] Align for trial #1 circa 2022-09-01 00:51:00
+[33844:worker:1:abcd] Align for trial #1 circa 2022-09-01 00:51:00
+[33849:worker:3:abcd] Align for trial #1 circa 2022-09-01 00:51:00
+[33846:worker:2:abcd] For trial #1, run task "worker:2:abcd" (sequence: tbl_a,tbl_b,tbl_c,tbl_d)
+[33849:worker:3:abcd] For trial #1, run task "worker:3:abcd" (sequence: tbl_a,tbl_b,tbl_c,tbl_d)
+[33844:worker:1:abcd] For trial #1, run task "worker:1:abcd" (sequence: tbl_a,tbl_b,tbl_c,tbl_d)
+[33849:worker:3:abcd] Align for trial #2 circa 2022-09-01 00:51:04
+[33844:worker:1:abcd] Align for trial #2 circa 2022-09-01 00:51:04
+[33849:worker:3:abcd] For trial #2, run task "worker:3:abcd" (sequence: tbl_a,tbl_b,tbl_c,tbl_d)
+[33844:worker:1:abcd] For trial #2, run task "worker:1:abcd" (sequence: tbl_a,tbl_b,tbl_c,tbl_d)
+[33846:worker:2:abcd] Align for trial #2 circa 2022-09-01 00:51:04
+[33846:worker:2:abcd] For trial #2, run task "worker:2:abcd" (sequence: tbl_a,tbl_b,tbl_c,tbl_d)
+[33849:worker:3:abcd] Align for trial #3 circa 2022-09-01 00:51:08
+[33844:worker:1:abcd] Align for trial #3 circa 2022-09-01 00:51:08
+[33844:worker:1:abcd] For trial #3, run task "worker:1:abcd" (sequence: tbl_a,tbl_b,tbl_c,tbl_d)
+[33849:worker:3:abcd] For trial #3, run task "worker:3:abcd" (sequence: tbl_a,tbl_b,tbl_c,tbl_d)
+[33846:worker:2:abcd] Align for trial #3 circa 2022-09-01 00:51:08
+[33846:worker:2:abcd] For trial #3, run task "worker:2:abcd" (sequence: tbl_a,tbl_b,tbl_c,tbl_d)
+[33844:worker:1:abcd] Align for trial #4 circa 2022-09-01 00:51:12
+[33849:worker:3:abcd] Align for trial #4 circa 2022-09-01 00:51:12
+[33849:worker:3:abcd] For trial #4, run task "worker:3:abcd" (sequence: tbl_a,tbl_b,tbl_c,tbl_d)
+[33844:worker:1:abcd] For trial #4, run task "worker:1:abcd" (sequence: tbl_a,tbl_b,tbl_c,tbl_d)
+[33846:worker:2:abcd] Align for trial #4 circa 2022-09-01 00:51:12
+[33846:worker:2:abcd] For trial #4, run task "worker:2:abcd" (sequence: tbl_a,tbl_b,tbl_c,tbl_d)
+[33849:worker:3:abcd] Align for trial #5 circa 2022-09-01 00:51:16
+[33844:worker:1:abcd] Align for trial #5 circa 2022-09-01 00:51:16
+[33849:worker:3:abcd] For trial #5, run task "worker:3:abcd" (sequence: tbl_a,tbl_b,tbl_c,tbl_d)
+[33844:worker:1:abcd] For trial #5, run task "worker:1:abcd" (sequence: tbl_a,tbl_b,tbl_c,tbl_d)
+[33846:worker:2:abcd] Align for trial #5 circa 2022-09-01 00:51:16
+[33846:worker:2:abcd] For trial #5, run task "worker:2:abcd" (sequence: tbl_a,tbl_b,tbl_c,tbl_d)
+[33849:worker:3:abcd] Align for trial #6 circa 2022-09-01 00:51:20
+[33844:worker:1:abcd] Align for trial #6 circa 2022-09-01 00:51:20
+[33849:worker:3:abcd] For trial #6, run task "worker:3:abcd" (sequence: tbl_a,tbl_b,tbl_c,tbl_d)
+[33844:worker:1:abcd] For trial #6, run task "worker:1:abcd" (sequence: tbl_a,tbl_b,tbl_c,tbl_d)
+[33846:worker:2:abcd] Align for trial #6 circa 2022-09-01 00:51:20
+[33846:worker:2:abcd] For trial #6, run task "worker:2:abcd" (sequence: tbl_a,tbl_b,tbl_c,tbl_d)
+
+
+

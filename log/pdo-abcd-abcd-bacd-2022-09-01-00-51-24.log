@@ -1,0 +1,190 @@
+Xdebug: [Step Debug] Could not connect to debugging client. Tried: 127.0.0.1:9003 (through xdebug.client_host/xdebug.client_port) :-(
+[33899:] Initialize tables (tbl_trials)
+[33899:] Initialize tables (tbl_a,tbl_b,tbl_c,tbl_d) with 10 records
+
+Xdebug: [Step Debug] Could not connect to debugging client. Tried: 127.0.0.1:9003 (through xdebug.client_host/xdebug.client_port) :-(
+Xdebug: [Step Debug] Could not connect to debugging client. Tried: 127.0.0.1:9003 (through xdebug.client_host/xdebug.client_port) :-(
+Xdebug: [Step Debug] Could not connect to debugging client. Tried: 127.0.0.1:9003 (through xdebug.client_host/xdebug.client_port) :-(
+[33914:worker:2:abcd] Align for trial #1 circa 2022-09-01 00:51:32
+[33917:worker:3:bacd] Align for trial #1 circa 2022-09-01 00:51:32
+[33912:worker:1:abcd] Align for trial #1 circa 2022-09-01 00:51:32
+[33912:worker:1:abcd] For trial #1, run task "worker:1:abcd" (sequence: tbl_a,tbl_b,tbl_c,tbl_d)
+[33917:worker:3:bacd] For trial #1, run task "worker:3:bacd" (sequence: tbl_b,tbl_a,tbl_c,tbl_d)
+[33914:worker:2:abcd] For trial #1, run task "worker:2:abcd" (sequence: tbl_a,tbl_b,tbl_c,tbl_d)
+[33912:worker:1:abcd] FAILURE: In trial #1, task "worker:1:abcd" raised exception: PDOException: "SQLSTATE[40001]: Serialization failure: 1213 Deadlock found when trying to get lock; try restarting transaction"
+#0 /Users/totten/bknix/build/dmaster/web/sites/all/modules/civicrm/ext/hurtlocker/src/PdoDatabaseAdapter.php(51): PDO->exec("UPDATE tbl_b SET field_w1 = 'worker:1:abcd updated tbl_b.field_w1' WHERE id = 1")
+#1 /Users/totten/bknix/build/dmaster/web/sites/all/modules/civicrm/ext/hurtlocker/src/Hurtlocker.php(249): Hurtlocker\PdoDatabaseAdapter->execute("UPDATE tbl_b SET field_w1 = %1 WHERE id = %2", (Array:2))
+#2 /Users/totten/bknix/build/dmaster/web/sites/all/modules/civicrm/ext/hurtlocker/src/Hurtlocker.php(126): Hurtlocker\Hurtlocker->updateRecords((Array:1), (Array:1), "field_w1", "worker:1:abcd updated tbl_b.field_w1")
+#3 /Users/totten/bknix/build/dmaster/web/sites/all/modules/civicrm/ext/hurtlocker/src/PdoDatabaseAdapter.php(30): Hurtlocker\Hurtlocker->Hurtlocker\{closure}(1)
+#4 /Users/totten/bknix/build/dmaster/web/sites/all/modules/civicrm/ext/hurtlocker/src/Hurtlocker.php(123): Hurtlocker\PdoDatabaseAdapter->transact(Object(Closure), 1)
+#5 phar:///Users/totten/bknix/bin/cv/src/Command/EvalCommand.php(52) : eval()'d code(1): Hurtlocker\Hurtlocker->worker(1)
+#6 phar:///Users/totten/bknix/bin/cv/src/Command/EvalCommand.php(52): eval()
+#7 phar:///Users/totten/bknix/bin/cv/vendor/symfony/console/Command/Command.php(255): Civi\Cv\Command\EvalCommand->execute(Object(Symfony\Component\Console\Input\ArgvInput), Object(Symfony\Component\Console\Output\ConsoleOutput))
+#8 phar:///Users/totten/bknix/bin/cv/vendor/symfony/console/Application.php(1009): Symfony\Component\Console\Command\Command->run(Object(Symfony\Component\Console\Input\ArgvInput), Object(Symfony\Component\Console\Output\ConsoleOutput))
+#9 phar:///Users/totten/bknix/bin/cv/vendor/symfony/console/Application.php(273): Symfony\Component\Console\Application->doRunCommand(Object(Civi\Cv\Command\EvalCommand), Object(Symfony\Component\Console\Input\ArgvInput), Object(Symfony\Component\Console\Output\ConsoleOutput))
+#10 phar:///Users/totten/bknix/bin/cv/src/Application.php(59): Symfony\Component\Console\Application->doRun(Object(Symfony\Component\Console\Input\ArgvInput), Object(Symfony\Component\Console\Output\ConsoleOutput))
+#11 phar:///Users/totten/bknix/bin/cv/vendor/symfony/console/Application.php(149): Civi\Cv\Application->doRun(Object(Symfony\Component\Console\Input\ArgvInput), Object(Symfony\Component\Console\Output\ConsoleOutput))
+#12 phar:///Users/totten/bknix/bin/cv/src/Application.php(26): Symfony\Component\Console\Application->run()
+#13 phar:///Users/totten/bknix/bin/cv/bin/cv(27): Civi\Cv\Application::main("phar:///Users/totten/bknix/bin/cv/bin")
+#14 /Users/totten/bknix/bin/cv(14): require("phar:///Users/totten/bknix/bin/cv/bin/cv")
+#15 {main}
+
+[33914:worker:2:abcd] FAILURE: In trial #1, task "worker:2:abcd" raised exception: PDOException: "SQLSTATE[40001]: Serialization failure: 1213 Deadlock found when trying to get lock; try restarting transaction"
+#0 /Users/totten/bknix/build/dmaster/web/sites/all/modules/civicrm/ext/hurtlocker/src/PdoDatabaseAdapter.php(51): PDO->exec("UPDATE tbl_b SET field_w2 = 'worker:2:abcd updated tbl_b.field_w2' WHERE id = 1")
+#1 /Users/totten/bknix/build/dmaster/web/sites/all/modules/civicrm/ext/hurtlocker/src/Hurtlocker.php(249): Hurtlocker\PdoDatabaseAdapter->execute("UPDATE tbl_b SET field_w2 = %1 WHERE id = %2", (Array:2))
+#2 /Users/totten/bknix/build/dmaster/web/sites/all/modules/civicrm/ext/hurtlocker/src/Hurtlocker.php(126): Hurtlocker\Hurtlocker->updateRecords((Array:1), (Array:1), "field_w2", "worker:2:abcd updated tbl_b.field_w2")
+#3 /Users/totten/bknix/build/dmaster/web/sites/all/modules/civicrm/ext/hurtlocker/src/PdoDatabaseAdapter.php(30): Hurtlocker\Hurtlocker->Hurtlocker\{closure}(1)
+#4 /Users/totten/bknix[33912:worker:1:abcd] Align for trial #2 circa 2022-09-01 00:51:36
+/build/dmaster/web/sites/all/modules/civicrm/ext/hurtlocker/src/Hurtlocker.php(123): Hurtlocker\PdoDatabaseAdapter->transact(Object(Closure), 1)
+#5 phar:///Users/totten/bknix/bin/cv/src/Command/EvalCommand.php(52) : eval()'d code(1): Hurtlocker\Hurtlocker->worker(2)
+#6 phar:///Users/totten/bknix/bin/cv/src/Command/EvalCommand.php(52): eval()
+#7 phar:///Users/totten/bknix/bin/cv/vendor/symfony/console/Command/Command.php(255): Civi\Cv\Command\EvalCommand->execute(Object(Symfony\Component\Console\Input\ArgvInput), Object(Symfony\Component\Console\Output\ConsoleOutput))
+#8 phar:///Users/totten/bknix/bin/cv/vendor/symfony/console/Application.php(1009): Symfony\Component\Console\Command\Command->run(Object(Symfony\Component\Console\Input\ArgvInput), Object(Symfony\Component\Console\Output\ConsoleOutput))
+#9 phar:///Users/totten/bknix/bin/cv/vendor/symfony/console/Application.php(273): Symfony\Component\Console\Application->doRunCommand(Object(Civi\Cv\Command\EvalCommand), Object(Symfony\Component\Console\Input\ArgvInput), Object(Symfony\Component\Console\Output\ConsoleOutput))
+#10 phar:///Users/totten/bknix/bin/cv/src/Application.php(59): Symfony\Component\Console\Application->doRun(Object(Symfony\Component\Console\Input\ArgvInput), Object(Symfony\Component\Console\Output\ConsoleOutput))
+#11 phar:///Users/totten/bknix/bin/cv/vendor/symfony/console/Application.php(149): Civi\Cv\Application->doRun(Object(Symfony\Component\Console\Input\ArgvInput), Object(Symfony\Component\Console\Output\ConsoleOutput))
+#12 phar:///Users/totten/bknix/bin/cv/src/Application.php(26): Symfony\Component\Console\Application->run()
+#13 phar:///Users/totten/bknix/bin/cv/bin/cv(27): Civi\Cv\Application::main("phar:///Users/totten/bknix/bin/cv/bin")
+#14 /Users/totten/bknix/bin/cv(14): require("phar:///Users/totten/bknix/bin/cv/bin/cv")
+#15 {main}
+
+[33914:worker:2:abcd] Align for trial #2 circa 2022-09-01 00:51:36
+[33917:worker:3:bacd] Align for trial #2 circa 2022-09-01 00:51:36
+[33914:worker:2:abcd] For trial #2, run task "worker:2:abcd" (sequence: tbl_a,tbl_b,tbl_c,tbl_d)
+[33917:worker:3:bacd] For trial #2, run task "worker:3:bacd" (sequence: tbl_b,tbl_a,tbl_c,tbl_d)
+[33912:worker:1:abcd] For trial #2, run task "worker:1:abcd" (sequence: tbl_a,tbl_b,tbl_c,tbl_d)
+[33914:worker:2:abcd] FAILURE: In trial #2, task "worker:2:abcd" raised exception: PDOException: "SQLSTATE[40001]: Serialization failure: 1213 Deadlock found when trying to get lock; try restarting transaction"
+#0 /Users/totten/bknix/build/dmaster/web/sites/all/modules/civicrm/ext/hurtlocker/src/PdoDatabaseAdapter.php(51): PDO->exec("UPDATE tbl_b SET field_w2 = 'worker:2:abcd updated tbl_b.field_w2' WHERE id = 2")
+#1 /Users/totten/bknix/build/dmaster/web/sites/all/modules/civicrm/ext/hurtlocker/src/Hurtlocker.php(249): Hurtlocker\PdoDatabaseAdapter->execute("UPDATE tbl_b SET field_w2 = %1 WHERE id = %2", (Array:2))
+#2 /Users/totten/bknix/build/dmaster/web/sites/all/modules/civicrm/ext/hurtlocker/src/Hurtlocker.php(126): Hurtlocker\Hurtlocker->updateRecords((Array:1), (Array:1), "field_w2", "worker:2:abcd updated tbl_b.field_w2")
+#3 /Users/totten/bknix/build/dmaster/web/sites/all/modules/civicrm/ext/hurtlocker/src/PdoDatabaseAdapter.php(30): Hurtlocker\Hurtlocker->Hurtlocker\{closure}(2)
+#4 /Users/totten/bknix/build/dmaster/web/sites/all/modules/civicrm/ext/hurtlocker/src/Hurtlocker.php(123): Hurtlocker\PdoDatabaseAdapter->transact(Object(Closure), 2)
+#5 phar:///Users/totten/bknix/bin/cv/src/Command/EvalCommand.php(52) : eval()'d code(1): Hurtlocker\Hurtlocker->worker(2)
+#6 phar:///Users/totten/bknix/bin/cv/src/Command/EvalCommand.php(52): eval()
+#7 phar:///Users/totten/bknix/bin/cv/vendor/symfony/console/Command/Command.php(255): Civi\Cv\Command\EvalCommand->execute(Object(Symfony\Component\Console\Input\ArgvInput), Object(Symfony\Component\Console\Output\ConsoleOutput))
+#8 phar:///Users/totten/bknix/bin/cv/vendor/symfony/console/Application.php(1009): Symfony\Component\Console\Command\Command->run(Object(Symfony\Component\Console\Input\ArgvInput), Object(Symfony\Component\Console\Output\ConsoleOutput))
+#9 phar:///Users/totten/bknix/bin/cv/vendor/symfony/console/Application.php(273): Symfony\Component\Console\Application->doRunCommand(Object(Civi\Cv\Command\EvalCommand), Object(Symfony\Component\Console\Input\ArgvInput), Object(Symfony\Component\Console\Output\ConsoleOutput))
+#10 phar:///Users/totten/bknix/bin/cv/src/Application.php(59): Symfony\Component\Console\Application->doRun(Object(Symfony\Component\Console\Input\ArgvInput), Object(Symfony\Component\Console\Output\ConsoleOutput))
+#11 phar:///Users/totten/bknix/bin/cv/vendor/symfony/console/Application.php(149): Civi\Cv\Application->doRun(Object(Symfony\Component\Console\Input\ArgvInput), Object(Symfony\Component\Console\Output\ConsoleOutput))
+#12 phar:///Users/totten/bknix/bin/cv/src/Application.php(26): Symfony\Component\Console\Application->run()
+#13 phar:///Users/totten/bknix/bin/cv/bin/cv(27): Civi\Cv\Application::main("phar:///Users/totten/bknix/bin/cv/bin")
+#14 /Users/totten/bknix/bin/cv(14): require("phar:///Users/totten/bknix/bin/cv/bin/cv")
+#15 {main}
+
+[33914:worker:2:abcd] Align for trial #3 circa 2022-09-01 00:51:40
+[33912:worker:1:abcd] FAILURE: In trial #2, task "worker:1:abcd" raised exception: PDOException: "SQLSTATE[40001]: Serialization failure: 1213 Deadlock found when trying to get lock; try restarting transaction"
+#0 /Users/totten/bknix/build/dmaster/web/sites/all/modules/civicrm/ext/hurtlocker/src/PdoDatabaseAdapter.php(51): PDO->exec("UPDATE tbl_b SET field_w1 = 'worker:1:abcd updated tbl_b.field_w1' WHERE id = 2")
+#1 /Users/totten/bknix/build/dmaster/web/sites/all/modules/civicrm/ext/hurtlocker/src/Hurtlocker.php(249): Hurtlocker\PdoDatabaseAdapter->execute("UPDATE tbl_b SET field_w1 = %1 WHERE id = %2", (Array:2))
+#2 /Users/totten/bknix/build/dmaster/web/sites/all/modules/civicrm/ext/hurtlocker/src/Hurtlocker.php(126): Hurtlocker\Hurtlocker->updateRecords((Array:1), (Array:1), "field_w1", "worker:1:abcd updated tbl_b.field_w1")
+#3 /Users/totten/bknix/build/dmaster/web/sites/all/modules/civicrm/ext/hurtlocker/src/PdoDatabaseAdapter.php(30): Hurtlocker\Hurtlocker->Hurtlocker\{closure}(2)
+#4 /Users/totten/bknix/build/dmaster/web/sites/all/modules/civicrm/ext/hurtlocker/src/Hurtlocker.php(123): Hurtlocker\PdoDatabaseAdapter->transact(Object(Closure), 2)
+#5 phar:///Users/totten/bknix/bin/cv/src/Command/EvalCommand.php(52) : eval()'d code(1): Hurtlocker\Hurtlocker->worker(1)
+#6 phar:///Users/totten/bknix/bin/cv/src/Command/EvalCommand.php(52): eval()
+#7 phar:///Users/totten/bknix/bin/cv/vendor/symfony/console/Command/Command.php(255): Civi\Cv\Command\EvalCommand->execute(Object(Symfony\Component\Console\Input\ArgvInput), Object(Symfony\Component\Console\Output\ConsoleOutput))
+#8 phar:///Users/totten/bknix/bin/cv/vendor/symfony/console/Application.php(1009): Symfony\Component\Console\Command\Command->run(Object(Symfony\Component\Console\Input\ArgvInput), Object(Symfony\Component\Console\Output\ConsoleOutput))
+#9 phar:///Users/totten/bknix/bin/cv/vendor/symfony/console/Application.php(273): Symfony\Component\Console\Application->doRunCommand(Object(Civi\Cv\Command\EvalCommand), Object(Symfony\Component\Console\Input\ArgvInput), Object(Symfony\Component\Console\Output\ConsoleOutput))
+#10 phar:///Users/totten/bknix/bin/cv/src/Application.php(59): Symfony\Component\Console\Application->doRun(Object(Symfony\Component\Console\Input\ArgvInput), Object(Symfony\Component\Console\Output\ConsoleOutput))
+#11 phar:///Users/totten/bknix/bin/cv/vendor/symfony/console/Application.php(149): Civi\Cv\Application->doRun(Object(Symfony\Component\Console\Input\ArgvInput), Object(Symfony\Component\Console\Output\ConsoleOutput))
+#12 phar:///Users/totten/bknix/bin/cv/src/Application.php(26): Symfony\Component\Console\Application->run()
+#13 phar:///Users/totten/bknix/bin/cv/bin/cv(27): Civi\Cv\Application::main("phar:///Users/totten/bknix/bin/cv/bin")
+#14 /Users/totten/bknix/bin/cv(14): require("phar:///Users/totten/bknix/bin/cv/bin/cv")
+#15 {main}
+
+[33912:worker:1:abcd] Align for trial #3 circa 2022-09-01 00:51:40
+[33917:worker:3:bacd] Align for trial #3 circa 2022-09-01 00:51:40
+[33917:worker:3:bacd] For trial #3, run task "worker:3:bacd" (sequence: tbl_b,tbl_a,tbl_c,tbl_d)
+[33912:worker:1:abcd] For trial #3, run task "worker:1:abcd" (sequence: tbl_a,tbl_b,tbl_c,tbl_d)
+[33914:worker:2:abcd] For trial #3, run task "worker:2:abcd" (sequence: tbl_a,tbl_b,tbl_c,tbl_d)
+[33917:worker:3:bacd] Align for trial #4 circa 2022-09-01 00:51:44
+[33914:worker:2:abcd] Align for trial #4 circa 2022-09-01 00:51:44
+[33914:worker:2:abcd] For trial #4, run task "worker:2:abcd" (sequence: tbl_a,tbl_b,tbl_c,tbl_d)
+[33917:worker:3:bacd] For trial #4, run task "worker:3:bacd" (sequence: tbl_b,tbl_a,tbl_c,tbl_d)
+[33912:worker:1:abcd] Align for trial #4 circa 2022-09-01 00:51:44
+[33912:worker:1:abcd] For trial #4, run task "worker:1:abcd" (sequence: tbl_a,tbl_b,tbl_c,tbl_d)
+[33914:worker:2:abcd] Align for trial #5 circa 2022-09-01 00:51:48
+[33917:worker:3:bacd] FAILURE: In trial #4, task "worker:3:bacd" raised exception: PDOException: "SQLSTATE[40001]: Serialization failure: 1213 Deadlock found when trying to get lock; try restarting transaction"
+#0 /Users/totten/bknix/build/dmaster/web/sites/all/modules/civicrm/ext/hurtlocker/src/PdoDatabaseAdapter.php(51): PDO->exec("UPDATE tbl_a SET field_w3 = 'worker:3:bacd updated tbl_a.field_w3' WHERE id = 4")
+#1 /Users/totten/bknix/build/dmaster/web/sites/all/modules/civicrm/ext/hurtlocker/src/Hurtlocker.php(249): Hurtlocker\PdoDatabaseAdapter->execute("UPDATE tbl_a SET field_w3 = %1 WHERE id = %2", (Array:2))
+#2 /Users/totten/bknix/build/dmaster/web/sites/all/modules/civicrm/ext/hurtlocker/src/Hurtlocker.php(126): Hurtlocker\Hurtlocker->updateRecords((Array:1), (Array:1), "field_w3", "worker:3:bacd updated tbl_a.field_w3")
+#3 /Users/totten/bknix/build/dmaster/web/sites/all/modules/civicrm/ext/hurtlocker/src/PdoDatabaseAdapter.php(30): Hurtlocker\Hurtlocker->Hurtlocker\{closure}(4)
+#4 /Users/totten/bknix/build/dmaster/web/sites/all/modules/civicrm/ext/hurtlocker/src/Hurtlocker.php(123): Hurtlocker\PdoDatabaseAdapter->transact(Object(Closure), 4)
+#5 phar:///Users/totten/bknix/bin/cv/src/Command/EvalCommand.php(52) : eval()'d code(1): Hurtlocker\Hurtlocker->worker(3)
+#6 phar:///Users/totten/bknix/bin/cv/src/Command/EvalCommand.php(52): eval()
+#7 phar:///Users/totten/bknix/bin/cv/vendor/symfony/console/Command/Command.php(255): Civi\Cv\Command\EvalCommand->execute(Object(Symfony\Component\Console\Input\ArgvInput), Object(Symfony\Component\Console\Output\ConsoleOutput))
+#8 phar:///Users/totten/bknix/bin/cv/vendor/symfony/console/Application.php(1009): Symfony\Component\Console\Command\Command->run(Object(Symfony\Component\Console\Input\ArgvInput), Object(Symfony\Component\Console\Output\ConsoleOutput))
+#9 phar:///Users/totten/bknix/bin/cv/vendor/symfony/console/Application.php(273): Symfony\Component\Console\Application->doRunCommand(Object(Civi\Cv\Command\EvalCommand), Object(Symfony\Component\Console\Input\ArgvInput), Object(Symfony\Component\Console\Output\ConsoleOutput))
+#10 phar:///Users/totten/bknix/bin/cv/src/Application.php(59): Symfony\Component\Console\Application->doRun(Object(Symfony\Component\Console\Input\ArgvInput), Object(Symfony\Component\Console\Output\ConsoleOutput))
+#11 phar:///Users/totten/bknix/bin/cv/vendor/symfony/console/Application.php(149): Civi\Cv\Application->doRun(Object(Symfony\Component\Console\Input\ArgvInput), Object(Symfony\Component\Console\Output\ConsoleOutput))
+#12 phar:///Users/totten/bknix/bin/cv/src/Application.php(26): Symfony\Component\Console\Application->run()
+#13 phar:///Users/totten/bknix/bin/cv/bin/cv(27): Civi\Cv\Application::main("phar:///Users/totten/bknix/bin/cv/bin")
+#14 /Users/totten/bknix/bin/cv(14): require("phar:///Users/totten/bknix/bin/cv/bin/cv")
+#15 {main}
+
+[33917:worker:3:bacd] Align for trial #5 circa 2022-09-01 00:51:48
+[33912:worker:1:abcd] Align for trial #5 circa 2022-09-01 00:51:48
+[33917:worker:3:bacd] For trial #5, run task "worker:3:bacd" (sequence: tbl_b,tbl_a,tbl_c,tbl_d)
+[33914:worker:2:abcd] For trial #5, run task "worker:2:abcd" (sequence: tbl_a,tbl_b,tbl_c,tbl_d)
+[33912:worker:1:abcd] For trial #5, run task "worker:1:abcd" (sequence: tbl_a,tbl_b,tbl_c,tbl_d)
+[33914:worker:2:abcd] FAILURE: In trial #5, task "worker:2:abcd" raised exception: PDOException: "SQLSTATE[40001]: Serialization failure: 1213 Deadlock found when trying to get lock; try restarting transaction"
+#0 /Users/totten/bknix/build/dmaster/web/sites/all/modules/civicrm/ext/hurtlocker/src/PdoDatabaseAdapter.php(51): PDO->exec("UPDATE tbl_b SET field_w2 = 'worker:2:abcd updated tbl_b.field_w2' WHERE id = 5")
+#1 /Users/totten/bknix/build/dmaster/web/sites/all/modules/civicrm/ext/hurtlocker/src/Hurtlocker.php(249): Hurtlocker\PdoDatabaseAdapter->execute("UPDATE tbl_b SET field_w2 = %1 WHERE id = %2", (Array:2))
+#2 /Users/totten/bknix/build/dmaster/web/sites/all/modules/civicrm/ext/hurtlocker/src/Hurtlocker.php(126): Hurtlocker\Hurtlocker->updateRecords((Array:1), (Array:1), "field_w2", "worker:2:abcd updated tbl_b.field_w2")
+#3 /Users/totten/bknix/build/dmaster/web/sites/all/modules/civicrm/ext/hurtlocker/src/PdoDatabaseAdapter.php(30): Hurtlocker\Hurtlocker->Hurtlocker\{closure}(5)
+#4 /Users/totten/bknix/build/dmaster/web/sites/all/modules/civicrm/ext/hurtlocker/src/Hurtlocker.php(123): Hurtlocker\PdoDatabaseAdapter->transact(Object(Closure), 5)
+#5 phar:///Users/totten/bknix/bin/cv/src/Command/EvalCommand.php(52) : eval()'d code(1): Hurtlocker\Hurtlocker->worker(2)
+#6 phar:///Users/totten/bknix/bin/cv/src/Command/EvalCommand.php(52): eval()
+#7 phar:///Users/totten/bknix/bin/cv/vendor/symfony/console/Command/Command.php(255): Civi\Cv\Command\EvalCommand->execute(Object(Symfony\Component\Console\Input\ArgvInput), Object(Symfony\Component\Console\Output\ConsoleOutput))
+#8 phar:///Users/totten/bknix/bin/cv/vendor/symfony/console/Application.php(1009): Symfony\Component\Console\Command\Command->run(Object(Symfony\Component\Console\Input\ArgvInput), Object(Symfony\Component\Console\Output\ConsoleOutput))
+#9 phar:///Users/totten/bknix/bin/cv/vendor/symfony/console/Application.php(273): Symfony\Component\Console\Application->doRunCommand(Object(Civi\Cv\Command\EvalCommand), Object(Symfony\Component\Console\Input\ArgvInput), Object(Symfony\Component\Console\Output\ConsoleOutput))
+#10 phar:///Users/totten/bknix/bin/cv/src/Application.php(59): Symfony\Component\Console\Application->doRun(Object(Symfony\Component\Console\Input\ArgvInput), Object(Symfony\Component\Console\Output\ConsoleOutput))
+#11 phar:///Users/totten/bknix/bin/cv/vendor/symfony/console/Application.php(149): Civi\Cv\Application->doRun(Object(Symfony\Component\Console\Input\ArgvInput), Object(Symfony\Component\Console\Output\ConsoleOutput))
+#12 phar:///Users/totten/bknix/bin/cv/src/Application.php(26): Symfony\Component\Console\Application->run()
+#13 phar:///Users/totten/bknix/bin/cv/bin/cv(27): Civi\Cv\Application::main("phar:///Users/totten/bknix/bin/cv/bin")
+#14 /Users/totten/bknix/bin/cv(14): require("phar:///Users/totten/bknix/bin/cv/bin/cv")
+#15 {main}
+
+[33914:worker:2:abcd] Align for trial #6 circa 2022-09-01 00:51:52
+[33917:worker:3:bacd] Align for trial #6 circa 2022-09-01 00:51:52
+[33912:worker:1:abcd] Align for trial #6 circa 2022-09-01 00:51:52
+[33917:worker:3:bacd] For trial #6, run task "worker:3:bacd" (sequence: tbl_b,tbl_a,tbl_c,tbl_d)
+[33912:worker:1:abcd] For trial #6, run task "worker:1:abcd" (sequence: tbl_a,tbl_b,tbl_c,tbl_d)
+[33914:worker:2:abcd] For trial #6, run task "worker:2:abcd" (sequence: tbl_a,tbl_b,tbl_c,tbl_d)
+[33912:worker:1:abcd] FAILURE: In trial #6, task "worker:1:abcd" raised exception: PDOException: "SQLSTATE[40001]: Serialization failure: 1213 Deadlock found when trying to get lock; try restarting transaction"
+#0 /Users/totten/bknix/build/dmaster/web/sites/all/modules/civicrm/ext/hurtlocker/src/PdoDatabaseAdapter.php(51): PDO->exec("UPDATE tbl_b SET field_w1 = 'worker:1:abcd updated tbl_b.field_w1' WHERE id = 6")
+#1 /Users/totten/bknix/build/dmaster/web/sites/all/modules/civicrm/ext/hurtlocker/src/Hurtlocker.php(249): Hurtlocker\PdoDatabaseAdapter->execute("UPDATE tbl_b SET field_w1 = %1 WHERE id = %2", (Array:2))
+#2 /Users/totten/bknix/build/dmaster/web/sites/all/modules/civicrm/ext/hurtlocker/src/Hurtlocker.php(126): Hurtlocker\Hurtlocker->updateRecords((Array:1), (Array:1), "field_w1", "worker:1:abcd updated tbl_b.field_w1")
+#3 /Users/totten/bknix/build/dmaster/web/sites/all/modules/civicrm/ext/hurtlocker/src/PdoDatabaseAdapter.php(30): Hurtlocker\Hurtlocker->Hurtlocker\{closure}(6)
+#4 /Users/totten/bknix/build/dmaster/web/sites/all/modules/civicrm/ext/hurtlocker/src/Hurtlocker.php(123): Hurtlocker\PdoDatabaseAdapter->transact(Object(Closure), 6)
+#5 phar:///Users/totten/bknix/bin/cv/src/Command/EvalCommand.php(52) : eval()'d code(1): Hurtlocker\Hurtlocker->worker(1)
+#6 phar:///Users/totten/bknix/bin/cv/src/Command/EvalCommand.php(52): eval()
+#7 phar:///Users/totten/bknix/bin/cv/vendor/symfony/console/Command/Command.php(255): Civi\Cv\Command\EvalCommand->execute(Object(Symfony\Component\Console\Input\ArgvInput), Object(Symfony\Component\Console\Output\ConsoleOutput))
+#8 phar:///Users/totten/bknix/bin/cv/vendor/symfony/console/Application.php(1009): Symfony\Component\Console\Command\Command->run(Object(Symfony\Component\Console\Input\ArgvInput), Object(Symfony\Component\Console\Output\ConsoleOutput))
+#9 phar:///Users/totten/bknix/bin/cv/vendor/symfony/console/Application.php(273): Symfony\Component\Console\Application->doRunCommand(Object(Civi\Cv\Command\EvalCommand), Object(Symfony\Component\Console\Input\ArgvInput), Object(Symfony\Component\Console\Output\ConsoleOutput))
+#10 phar:///Users/totten/bknix/bin/cv/src/Application.php(59): Symfony\Component\Console\Application->doRun(Object(Symfony\Component\Console\Input\ArgvInput), Object(Symfony\Component\Console\Output\ConsoleOutput))
+#11 phar:///Users/totten/bknix/bin/cv/vendor/symfony/console/Application.php(149): Civi\Cv\Application->doRun(Object(Symfony\Component\Console\Input\ArgvInput), Object(Symfony\Component\Console\Output\ConsoleOutput))
+#12 phar:///Users/totten/bknix/bin/cv/src/Application.php(26): Symfony\Component\Console\Application->run()
+#13 phar:///Users/totten/bknix/bin/cv/bin/cv(27): Civi\Cv\Application::main("phar:///Users/totten/bknix/bin/cv/bin")
+#14 /Users/totten/bknix/bin/cv(14): require("phar:///Users/totten/bknix/bin/cv/bin/cv")
+#15 {main}
+
+[33914:worker:2:abcd] FAILURE: In trial #6, task "worker:2:abcd" raised exception: PDOException: "SQLSTATE[40001]: Serialization failure: 1213 Deadlock found when trying to get lock; try restarting transaction"
+#0 /Users/totten/bknix/build/dmaster/web/sites/all/modules/civicrm/ext/hurtlocker/src/PdoDatabaseAdapter.php(51): PDO->exec("UPDATE tbl_b SET field_w2 = 'worker:2:abcd updated tbl_b.field_w2' WHERE id = 6")
+#1 /Users/totten/bknix/build/dmaster/web/sites/all/modules/civicrm/ext/hurtlocker/src/Hurtlocker.php(249): Hurtlocker\PdoDatabaseAdapter->execute("UPDATE tbl_b SET field_w2 = %1 WHERE id = %2", (Array:2))
+#2 /Users/totten/bknix/build/dmaster/web/sites/all/modules/civicrm/ext/hurtlocker/src/Hurtlocker.php(126): Hurtlocker\Hurtlocker->updateRecords((Array:1), (Array:1), "field_w2", "worker:2:abcd updated tbl_b.field_w2")
+#3 /Users/totten/bknix/build/dmaster/web/sites/all/modules/civicrm/ext/hurtlocker/src/PdoDatabaseAdapter.php(30): Hurtlocker\Hurtlocker->Hurtlocker\{closure}(6)
+#4 /Users/totten/bknix
+/build/dmaster/web/sites/all/modules/civicrm/ext/hurtlocker/src/Hurtlocker.php(123): Hurtlocker\PdoDatabaseAdapter->transact(Object(Closure), 6)
+#5 phar:///Users/totten/bknix/bin/cv/src/Command/EvalCommand.php(52) : eval()'d code(1): Hurtlocker\Hurtlocker->worker(2)
+#6 phar:///Users/totten/bknix/bin/cv/src/Command/EvalCommand.php(52): eval()
+#7 phar:///Users/totten/bknix/bin/cv/vendor/symfony/console/Command/Command.php(255): Civi\Cv\Command\EvalCommand->execute(Object(Symfony\Component\Console\Input\ArgvInput), Object(Symfony\Component\Console\Output\ConsoleOutput))
+#8 phar:///Users/totten/bknix/bin/cv/vendor/symfony/console/Application.php(1009): Symfony\Component\Console\Command\Command->run(Object(Symfony\Component\Console\Input\ArgvInput), Object(Symfony\Component\Console\Output\ConsoleOutput))
+#9 phar:///Users/totten/bknix/bin/cv/vendor/symfony/console/Application.php(273): Symfony\Component\Console\Application->doRunCommand(Object(Civi\Cv\Command\EvalCommand), Object(Symfony\Component\Console\Input\ArgvInput), Object(Symfony\Component\Console\Output\ConsoleOutput))
+#10 phar:///Users/totten/bknix/bin/cv/src/Application.php(59): Symfony\Component\Console\Application->doRun(Object(Symfony\Component\Console\Input\ArgvInput), Object(Symfony\Component\Console\Output\ConsoleOutput))
+#11 phar:///Users/totten/bknix/bin/cv/vendor/symfony/console/Application.php(149): Civi\Cv\Application->doRun(Object(Symfony\Component\Console\Input\ArgvInput), Object(Symfony\Component\Console\Output\ConsoleOutput))
+#12 phar:///Users/totten/bknix/bin/cv/src/Application.php(26): Symfony\Component\Console\Application->run()
+#13 phar:///Users/totten/bknix/bin/cv/bin/cv(27): Civi\Cv\Application::main("phar:///Users/totten/bknix/bin/cv/bin")
+#14 /Users/totten/bknix/bin/cv(14): require("phar:///Users/totten/bknix/bin/cv/bin/cv")
+#15 {main}
+
+
+

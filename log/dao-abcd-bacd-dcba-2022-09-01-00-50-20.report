@@ -1,0 +1,60 @@
+Xdebug: [Step Debug] Could not connect to debugging client. Tried: 127.0.0.1:9003 (through xdebug.client_host/xdebug.client_port) :-(
+## Configuration
++--------------------------+----------------------------------+
+| key                      | value                            |
++--------------------------+----------------------------------+
+| workerSeries             | ["abcd","bacd","dcba"]           |
+| recordCount              | 10                               |
+| trialCount               | 6                                |
+| trialDuration            | 4                                |
+| lockDuration             | 1.5                              |
+| db                       | Hurtlocker\DaoDatabaseAdapter    |
+| md5(DB_DataObject)       | 20f0046845ed6551cc02cf0c44c4e8e0 |
+| CIVICRM_DEADLOCK_RETRIES | 3                                |
++--------------------------+----------------------------------+
+
+## Trials
++-------+---------------+-------+---------+
+| trial | worker        | is_ok | message |
++-------+---------------+-------+---------+
+|     1 | worker:1:abcd |     1 |         |
+|     1 | worker:2:bacd |     1 |         |
+|     1 | worker:3:dcba |     1 |         |
+|     2 | worker:1:abcd |     1 |         |
+|     2 | worker:2:bacd |     1 |         |
+|     2 | worker:3:dcba |     1 |         |
+|     3 | worker:1:abcd |     1 |         |
+|     3 | worker:2:bacd |     1 |         |
+|     3 | worker:3:dcba |     1 |         |
+|     4 | worker:1:abcd |     1 |         |
+|     4 | worker:2:bacd |     1 |         |
+|     4 | worker:3:dcba |     1 |         |
+|     5 | worker:1:abcd |     1 |         |
+|     5 | worker:2:bacd |     1 |         |
+|     5 | worker:3:dcba |     1 |         |
+|     6 | worker:1:abcd |     1 |         |
+|     6 | worker:2:bacd |     1 |         |
+|     6 | worker:3:dcba |     1 |         |
++-------+---------------+-------+---------+
+
+## Data
++------+----------------------------------------+----------------------------------------+----------------------------------------+----------------------------------------+----------------------------------------+----------------------------------------+
+| step | trial id#1                             | trial id#2                             | trial id#3                             | trial id#4                             | trial id#5                             | trial id#6                             |
++------+----------------------------------------+----------------------------------------+----------------------------------------+----------------------------------------+----------------------------------------+----------------------------------------+
+| 1:a  | "worker:1:abcd updated tbl_a.field_w1" | null                                   | "worker:1:abcd updated tbl_a.field_w1" | null                                   | null                                   | null                                   |
+| 1:b  | "worker:1:abcd updated tbl_b.field_w1" | "worker:1:abcd updated tbl_b.field_w1" | "worker:1:abcd updated tbl_b.field_w1" | "worker:1:abcd updated tbl_b.field_w1" | null                                   | "worker:1:abcd updated tbl_b.field_w1" |
+| 1:c  | "worker:1:abcd updated tbl_c.field_w1" | "worker:1:abcd updated tbl_c.field_w1" | "worker:1:abcd updated tbl_c.field_w1" | "worker:1:abcd updated tbl_c.field_w1" | "worker:1:abcd updated tbl_c.field_w1" | "worker:1:abcd updated tbl_c.field_w1" |
+| 1:d  | "worker:1:abcd updated tbl_d.field_w1" | "worker:1:abcd updated tbl_d.field_w1" | "worker:1:abcd updated tbl_d.field_w1" | "worker:1:abcd updated tbl_d.field_w1" | "worker:1:abcd updated tbl_d.field_w1" | "worker:1:abcd updated tbl_d.field_w1" |
++------+----------------------------------------+----------------------------------------+----------------------------------------+----------------------------------------+----------------------------------------+----------------------------------------+
+| 2:b  | null                                   | "worker:2:bacd updated tbl_b.field_w2" | null                                   | "worker:2:bacd updated tbl_b.field_w2" | "worker:2:bacd updated tbl_b.field_w2" | "worker:2:bacd updated tbl_b.field_w2" |
+| 2:a  | "worker:2:bacd updated tbl_a.field_w2" | "worker:2:bacd updated tbl_a.field_w2" | null                                   | "worker:2:bacd updated tbl_a.field_w2" | "worker:2:bacd updated tbl_a.field_w2" | "worker:2:bacd updated tbl_a.field_w2" |
+| 2:c  | "worker:2:bacd updated tbl_c.field_w2" | "worker:2:bacd updated tbl_c.field_w2" | "worker:2:bacd updated tbl_c.field_w2" | "worker:2:bacd updated tbl_c.field_w2" | "worker:2:bacd updated tbl_c.field_w2" | "worker:2:bacd updated tbl_c.field_w2" |
+| 2:d  | "worker:2:bacd updated tbl_d.field_w2" | "worker:2:bacd updated tbl_d.field_w2" | "worker:2:bacd updated tbl_d.field_w2" | "worker:2:bacd updated tbl_d.field_w2" | "worker:2:bacd updated tbl_d.field_w2" | "worker:2:bacd updated tbl_d.field_w2" |
++------+----------------------------------------+----------------------------------------+----------------------------------------+----------------------------------------+----------------------------------------+----------------------------------------+
+| 3:d  | null                                   | null                                   | "worker:3:dcba updated tbl_d.field_w3" | "worker:3:dcba updated tbl_d.field_w3" | "worker:3:dcba updated tbl_d.field_w3" | "worker:3:dcba updated tbl_d.field_w3" |
+| 3:c  | null                                   | "worker:3:dcba updated tbl_c.field_w3" | "worker:3:dcba updated tbl_c.field_w3" | "worker:3:dcba updated tbl_c.field_w3" | "worker:3:dcba updated tbl_c.field_w3" | "worker:3:dcba updated tbl_c.field_w3" |
+| 3:b  | "worker:3:dcba updated tbl_b.field_w3" | "worker:3:dcba updated tbl_b.field_w3" | "worker:3:dcba updated tbl_b.field_w3" | "worker:3:dcba updated tbl_b.field_w3" | "worker:3:dcba updated tbl_b.field_w3" | "worker:3:dcba updated tbl_b.field_w3" |
+| 3:a  | "worker:3:dcba updated tbl_a.field_w3" | "worker:3:dcba updated tbl_a.field_w3" | "worker:3:dcba updated tbl_a.field_w3" | "worker:3:dcba updated tbl_a.field_w3" | "worker:3:dcba updated tbl_a.field_w3" | "worker:3:dcba updated tbl_a.field_w3" |
++------+----------------------------------------+----------------------------------------+----------------------------------------+----------------------------------------+----------------------------------------+----------------------------------------+
+
+
