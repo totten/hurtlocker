@@ -3,11 +3,16 @@ namespace Hurtlocker;
 
 class TextTable {
 
+  const SEPARATOR = '-';
+
   public static function create(array $rows): string {
     $columns = array_keys($rows[0]);
     $widths = [];
     $isNumeric = [];
     foreach ($rows as $row) {
+      if (!is_array($row)) {
+        continue;
+      }
       foreach ($row as $column => $value) {
         $widths[$column] = max($widths[$column] ?? 0, strlen($value), strlen($column));
         $isNumeric[$column] = ($isNumeric[$column] ?? TRUE) && is_numeric($value);
@@ -32,7 +37,15 @@ class TextTable {
     $buf .= sprintf($fmt, ...$columns);
     $buf .= $hr;
     foreach ($rows as $row) {
-      $buf .= sprintf($fmt, ...array_values(\CRM_Utils_Array::subset($row, $columns)));
+      if (is_array($row)) {
+        $buf .= sprintf($fmt, ...array_values(\CRM_Utils_Array::subset($row, $columns)));
+      }
+      elseif ($row === static::SEPARATOR) {
+        $buf .= $hr;
+      }
+      else {
+        $row .= '(MALFORMED ROW)';
+      }
     }
     $buf .= $hr;
     return $buf;
