@@ -160,7 +160,7 @@ class Hurtlocker {
         2 => [$this->activeTask, 'String'],
         3 => [$isOK, 'Int'],
         4 => [$data, 'String'],
-        5 => [json_encode($writeSeq), 'String']
+        5 => [json_encode($writeSeq), 'String'],
       ]);
     }
   }
@@ -226,7 +226,7 @@ class Hurtlocker {
 
   protected function note($message, ...$args): void {
     $pid = getmypid();
-    fprintf(STDERR,'[%d:%s] ' . $message, $pid, $this->activeTask, ...$args);
+    fprintf(STDERR, '[%d:%s] ' . $message, $pid, $this->activeTask, ...$args);
   }
 
   /**
@@ -284,4 +284,5 @@ class Hurtlocker {
       usleep(1000 * 1000 * $this->lockDuration);
     }
   }
+
 }
