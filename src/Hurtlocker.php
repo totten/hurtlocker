@@ -122,7 +122,9 @@ class Hurtlocker {
       try {
         $this->db->transact(function($trialId) use ($writeSeq, $fieldName) {
           $this->note("For trial #%d, run task \"%s\" (sequence: %s)\n", $trialId, $this->activeTask, implode(',', $writeSeq));
-          $this->updateRecords($writeSeq, [$trialId], $fieldName, "{$this->activeTask} committed $fieldName");
+          foreach ($writeSeq as $tableName) {
+            $this->updateRecords([$tableName], [$trialId], $fieldName, "{$this->activeTask} updated $tableName.$fieldName");
+          }
           $this->sleep();
           return TRUE; /* Commit this unit of work */
         }, $trialId);
@@ -154,7 +156,7 @@ class Hurtlocker {
     $worker = $this->workerSeries[$workerId - 1];
     $tables = [];
     for ($i = 0; $i < strlen($worker); $i++) {
-      $tables[] = 'tbl_' . $worker[$i];
+      $tables[$worker[$i]] = 'tbl_' . $worker[$i];
     }
     return $tables;
   }
@@ -181,23 +183,26 @@ class Hurtlocker {
         $trial['message'] = \CRM_Utils_String::ellipsify($messageLines[0], 60);
         return $trial;
       },
-      $this->db->queryAssoc('SELECT trial, worker, write_seq, is_ok, message FROM tbl_trials ORDER BY trial, worker')
+      $this->db->queryAssoc('SELECT trial, worker, is_ok, message FROM tbl_trials ORDER BY trial, worker')
     );
     printf("## %s\n%s\n", 'Trials', TextTable::create($trials));
 
-    $tableSeq = ['tbl_a', 'tbl_b', 'tbl_c', 'tbl_d'];
     $rows = [];
-    foreach (['field_w1', 'field_w2', 'field_w3'] as $field) {
-      foreach ($tableSeq as $table) {
-        $values = $this->db->queryMap("SELECT id, $field FROM $table", 'id', $field);
+    for ($workerId = 1; $workerId <= count($this->workerSeries); $workerId++) {
+      $fieldName = "field_w{$workerId}";
+      $writeSeq = $this->getWorkerWriteSequence($workerId);
+      foreach ($writeSeq as $tableLetter => $tableName) {
+        $values = $this->db->queryMap("SELECT id, $fieldName FROM $tableName", 'id', $fieldName);
 
-        $row = ['field' => $field, 'table' => $table];
+        $row = ['step' => "{$workerId}:{$tableLetter}"];
         for ($id = 1; $id <= $this->trialCount; $id++) {
           $row["trial id#$id"] = json_encode($values[$id]);
         }
         $rows[] = $row;
       }
+      $rows[] = TextTable::SEPARATOR;
     }
+    array_pop($rows);
     printf("## %s\n%s\n", 'Data', TextTable::create($rows));
   }
 
