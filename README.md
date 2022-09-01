@@ -49,6 +49,31 @@ trials where the worker-processes compete. Any exceptions (eg deadlocks) are log
 to see which records have been truly updated (and which have been rolled back to their original/blank form).
 These are recorded in the `./log` folder.
 
+## Test Schema
+
+The script initializes four example tables. They are designed to make deadlocks more likely. The example tables all look the same:
+
+* `tbl_a` (`id int`, `field_w1 varchar`, `field_w2 varchar`, `field_w3 varchar`)
+* `tbl_b` (`id int`, `field_w1 varchar`, `field_w2 varchar`, `field_w3 varchar`)
+* `tbl_c` (`id int`, `field_w1 varchar`, `field_w2 varchar`, `field_w3 varchar`)
+* `tbl_d` (`id int`, `field_w1 varchar`, `field_w2 varchar`, `field_w3 varchar`)
+
+The tables are prepopulated with empty rows -- one row for each trial.
+
+* In trial #1, there will be contention to fill-in data for record #1 across all tables (`tbl_{a,b,c,d}`).
+* In trial #2, there will be contention to fill-in data for record #2 across all tables (`tbl_{a,b,c,d}`).
+* In trial #3, there will be contention to fill-in data for record #3 across all tables (`tbl_{a,b,c,d}`).
+
+Every worker tries to update the same records in the same tables. Specifically, the workers target their updates at these columns:
+
+* Worker #1 seeks to update `field_w1` across all of `tbl_{a,b,c,d}`
+* Worker #2 seeks to update `field_w2` across all of `tbl_{b,c,d,a}`
+* Worker #3 seeks to update `field_w3` across all of `tbl_{d,c,b,a}`
+
+> NOTE: It's not essential that each worker target separate fields. However, this makes it a bit easier to inspect the resulting data and understand what happens. If `field_w2` is blank, that means that Worker #2 failed to write to it.
+
+For any worker to succeed, it will need to lock the contested record in all tables. However, these workers are not very social -- after acquiring locks, they go to `sleep()` to prevent other workers from updating the contested record.
+
 ## Reports / Logs
 
 Let us take an example report. Each report includes a list of "Trials":
