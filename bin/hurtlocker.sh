@@ -6,10 +6,27 @@
 ## example: hurtlocker.sh DAO aaa
 ## example: hurtlocker.sh DAO abd
 
-function do_cv() {
-  ./bin/cv.phar -v "$@"
+###############################################################################
+## Bootstrap
+
+## Determine the absolute path of the directory with the file
+## usage: absdirname <file-path>
+function absdirname() {
+  pushd $(dirname $0) >> /dev/null
+    pwd
+  popd >> /dev/null
 }
 
+BINDIR=$(absdirname "$0")
+PRJDIR=$(dirname "$BINDIR")
+
+###############################################################################
+function do_hurtlocker() {
+  #./bin/cv.phar -v scr "$BINDIR"/hurtlocker.php
+  cv -v scr "$BINDIR"/hurtlocker.php
+}
+
+###############################################################################
 if [ -z "$1" -o -z "$2" ]; then
   echo "usage: $0 <dbapi> <worker-config>"
   exit 1
@@ -17,32 +34,32 @@ fi
 
 DB_API="use$1"
 WORKERS="$2"
-LOGDIR=/tmp/hurtlocker
+LOGDIR="$PRJDIR/log"
 TS=$(date '+%Y-%m-%d-%H-%M-%S')
-LOG="${LOGDIR}/${DB_API}-${WORKERS}-${TS}.log"
-REPORT="${LOGDIR}/${DB_API}-${WORKERS}-${TS}.report"
+LOG="${LOGDIR}/${1}-${WORKERS}-${TS}.log"
+REPORT="${LOGDIR}/${1}-${WORKERS}-${TS}.report"
 
 ### Go
 trap "trap - SIGTERM && kill -- -$$" SIGINT SIGTERM EXIT
 mkdir -p "$LOGDIR"
 
-echo $DB_API init | do_cv scr tmp/hurtlocker.php 2>&1 | tee -a "$LOG"
+echo $DB_API init | do_hurtlocker 2>&1 | tee -a "$LOG"
 
 case "$WORKERS" in
   aaa)
-    echo $DB_API worker:1:a | do_cv scr tmp/hurtlocker.php 2>&1 | tee -a "$LOG" &
-    echo $DB_API worker:2:a | do_cv scr tmp/hurtlocker.php 2>&1 | tee -a "$LOG" &
-    echo $DB_API worker:3:a | do_cv scr tmp/hurtlocker.php 2>&1 | tee -a "$LOG" &
+    echo $DB_API worker:1:a | do_hurtlocker 2>&1 | tee -a "$LOG" &
+    echo $DB_API worker:2:a | do_hurtlocker 2>&1 | tee -a "$LOG" &
+    echo $DB_API worker:3:a | do_hurtlocker 2>&1 | tee -a "$LOG" &
     ;;
   aab)
-    echo $DB_API worker:1:a | do_cv scr tmp/hurtlocker.php 2>&1 | tee -a "$LOG" &
-    echo $DB_API worker:2:a | do_cv scr tmp/hurtlocker.php 2>&1 | tee -a "$LOG" &
-    echo $DB_API worker:3:b | do_cv scr tmp/hurtlocker.php 2>&1 | tee -a "$LOG" &
+    echo $DB_API worker:1:a | do_hurtlocker 2>&1 | tee -a "$LOG" &
+    echo $DB_API worker:2:a | do_hurtlocker 2>&1 | tee -a "$LOG" &
+    echo $DB_API worker:3:b | do_hurtlocker 2>&1 | tee -a "$LOG" &
     ;;
   abd)
-    echo $DB_API worker:1:a | do_cv scr tmp/hurtlocker.php 2>&1 | tee -a "$LOG" &
-    echo $DB_API worker:2:b | do_cv scr tmp/hurtlocker.php 2>&1 | tee -a "$LOG" &
-    echo $DB_API worker:3:d | do_cv scr tmp/hurtlocker.php 2>&1 | tee -a "$LOG" &
+    echo $DB_API worker:1:a | do_hurtlocker 2>&1 | tee -a "$LOG" &
+    echo $DB_API worker:2:b | do_hurtlocker 2>&1 | tee -a "$LOG" &
+    echo $DB_API worker:3:d | do_hurtlocker 2>&1 | tee -a "$LOG" &
     ;;
   *)
     echo "Unrecognized pattern: $WORKERS"
@@ -52,4 +69,4 @@ esac
 
 wait
 
-echo $DB_API report | do_cv scr tmp/hurtlocker.php | tee "$REPORT"
+echo $DB_API report | do_hurtlocker | tee "$REPORT"
