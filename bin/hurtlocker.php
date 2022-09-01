@@ -53,11 +53,12 @@ class Hurtlocker {
   protected $writeSequences;
 
   /**
-   * The write-sequences assigned to each worker
+   * The list of config options that describe the workers
    *
-   * @var
+   * @var string
+   *   ex: 'aab' or 'abd'
    */
-  protected $workerWriteSequences;
+  protected $workerSeries;
 
   /**
    * @var \HurtLocker_DB
@@ -111,11 +112,7 @@ class Hurtlocker {
         break;
     }
 
-    $this->workerWriteSequences = [];
-    for ($i = 0; $i < strlen($workerSeries); $i++) {
-      $this->workerWriteSequences[1 + $i] = $this->writeSequences[$workerSeries[$i]];
-    }
-
+    $this->workerSeries = $workerSeries;
   }
 
   public function init(): void {
@@ -136,7 +133,7 @@ class Hurtlocker {
   }
 
   public function worker($workerId): void {
-    $writeSeq = $this->workerWriteSequences[$workerId];
+    $writeSeq = $this->getWorkerWriteSequence($workerId);
     $fieldName = "field_w{$workerId}";
 
     for ($trialId = 1; $trialId <= $this->trialCount; $trialId++) {
@@ -165,16 +162,15 @@ class Hurtlocker {
         5 => [json_encode($writeSeq), 'String']
       ]);
     }
-
-    // $this->runTrials();
   }
 
-  protected function runTrials(callable $unitOfWork): void {
+  protected function getWorkerWriteSequence(int $workerId): array {
+    return $this->writeSequences[$this->workerSeries[$workerId - 1]];
   }
 
   public function report(): void {
     $config = [];
-    foreach (['recordCount', 'trialCount', 'trialDuration', 'lockDuration'] as $key) {
+    foreach (['workerSeries', 'recordCount', 'trialCount', 'trialDuration', 'lockDuration'] as $key) {
       $config[] = ['key' => $key, 'value' => $this->{$key}];
     }
     $config[] = ['key' => 'db', 'value' => get_class($this->db)];
