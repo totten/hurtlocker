@@ -77,6 +77,9 @@ class Hurtlocker {
     $this->workerSeries = $workerSeries;
   }
 
+  /**
+   * Create a series of example SQL tables for use in deadlock testing.
+   */
   public function init(): void {
     $this->note("Initialize tables (%s)\n", implode(',', ['tbl_trials']));
     $this->db->execute("DROP TABLE IF EXISTS tbl_trials");
@@ -94,8 +97,23 @@ class Hurtlocker {
     }
   }
 
+  /**
+   * Run a series for tasks for worker #X.
+   *
+   * The exact behavior of worker #X depends on the config options. But generally:
+   *
+   * - Each worker runs repeated tasks ($trialCount).
+   * - Within each trial, each worker will do some SQL UPDATEs.
+   *
+   * @param $workerId
+   */
   public function worker($workerId): void {
     $this->activeTask = "worker:$workerId:" . $this->workerSeries[$workerId - 1];
+    /**
+     * The write-sequence is a list of MySQL tables to which the worker will write.
+     *
+     * @var string[]
+     */
     $writeSeq = $this->getWorkerWriteSequence($workerId);
     $fieldName = "field_w{$workerId}";
 
@@ -127,10 +145,18 @@ class Hurtlocker {
     }
   }
 
+  /**
+   * @param int $workerId
+   * @return string[]
+   *   List of SQL tables that should receive updates.
+   */
   protected function getWorkerWriteSequence(int $workerId): array {
     return $this->writeSequences[$this->workerSeries[$workerId - 1]];
   }
 
+  /**
+   * Output a report describing the test results.
+   */
   public function report(): void {
     $config = [];
     foreach (['workerSeries', 'recordCount', 'trialCount', 'trialDuration', 'lockDuration'] as $key) {
