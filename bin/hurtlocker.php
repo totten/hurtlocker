@@ -185,7 +185,7 @@ class Hurtlocker {
       $config[] = ['key' => 'md5(DB_DataObject)', 'value' => md5(file_get_contents($dbDataObject->getFileName()))];
       $config[] = ['key' => 'CIVICRM_DEADLOCK_RETRIES', 'value' => CIVICRM_DEADLOCK_RETRIES];
     }
-    printf("## %s\n%s\n", 'Configuration', Hurtlocker_Table::create($config));
+    printf("## %s\n%s\n", 'Configuration', TextTable::create($config));
 
     $trials = array_map(
       function(array $trial) {
@@ -195,7 +195,7 @@ class Hurtlocker {
       },
       $this->db->queryAssoc('SELECT trial, worker, write_seq, is_ok, message FROM tbl_trials ORDER BY trial, worker')
     );
-    printf("## %s\n%s\n", 'Trials', Hurtlocker_Table::create($trials));
+    printf("## %s\n%s\n", 'Trials', TextTable::create($trials));
 
     $tableSeq = ['tbl_a', 'tbl_b', 'tbl_c', 'tbl_d'];
     $rows = [];
@@ -210,7 +210,7 @@ class Hurtlocker {
         $rows[] = $row;
       }
     }
-    printf("## %s\n%s\n", 'Data', Hurtlocker_Table::create($rows));
+    printf("## %s\n%s\n", 'Data', TextTable::create($rows));
   }
 
   /**
@@ -291,44 +291,6 @@ class Hurtlocker {
   }
 }
 
-class Hurtlocker_Table {
-
-  public static function create(array $rows): string {
-    $columns = array_keys($rows[0]);
-    $widths = [];
-    $isNumeric = [];
-    foreach ($rows as $row) {
-      foreach ($row as $column => $value) {
-        $widths[$column] = max($widths[$column] ?? 0, strlen($value), strlen($column));
-        $isNumeric[$column] = ($isNumeric[$column] ?? TRUE) && is_numeric($value);
-      }
-    }
-    $fmt = '| ' . implode(' | ', array_map(
-        function($column) use ($widths, $isNumeric) {
-          $n = $widths[$column];
-          return $isNumeric[$column] ? "%{$n}s" : "%-{$n}s";
-        },
-        $columns
-      )) . " |\n";
-    $hr = '+-' . implode('-+-', array_map(
-        function($column) use ($widths, $isNumeric) {
-          return str_repeat('-', $widths[$column]);
-        },
-        $columns
-      )) . "-+\n";
-
-    $buf = '';
-    $buf .= $hr;
-    $buf .= sprintf($fmt, ...$columns);
-    $buf .= $hr;
-    foreach ($rows as $row) {
-      $buf .= sprintf($fmt, ...array_values(\CRM_Utils_Array::subset($row, $columns)));
-    }
-    $buf .= $hr;
-    return $buf;
-  }
-
-}
 
 interface HurtLocker_DB {
   public function transact($callback, ...$args): void;
