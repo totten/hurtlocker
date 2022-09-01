@@ -66,26 +66,14 @@ class Hurtlocker {
    */
   private $db;
 
-  public function __construct() {
+  public function __construct(DatabaseInterface $db, string $workerSeries) {
     $this->startTime = time();
     $this->writeSequences = [];
     $this->writeSequences['a'] = ['tbl_a', 'tbl_b', 'tbl_c', 'tbl_d'];
     $this->writeSequences['b'] = ['tbl_b', 'tbl_a', 'tbl_c', 'tbl_d'];
     $this->writeSequences['c'] = ['tbl_c', 'tbl_a', 'tbl_b', 'tbl_d'];
     $this->writeSequences['d'] = ['tbl_d', 'tbl_c', 'tbl_b', 'tbl_a'];
-  }
-
-  public function config(string $dbType, string $workerSeries): void {
-    switch (strtolower($dbType)) {
-      case 'dao':
-        $this->db = new DaoDatabaseAdapter();
-        break;
-
-      case 'pdo':
-        $this->db = new PdoDatabaseAdapter();
-        break;
-    }
-
+    $this->db = $db;
     $this->workerSeries = $workerSeries;
   }
 

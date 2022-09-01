@@ -3,12 +3,25 @@
 require_once 'hurtlocker.civix.php';
 // phpcs:disable
 use CRM_Hurtlocker_ExtensionUtil as E;
+use Hurtlocker\DaoDatabaseAdapter;
+use Hurtlocker\PdoDatabaseAdapter;
 // phpcs:enable
 
-function hurtlocker(...$config): \Hurtlocker\Hurtlocker {
-  $h = new \Hurtlocker\Hurtlocker();
-  $h->config(...$config);
-  return $h;
+function hurtlocker(string $dbType, string $workerSeries): \Hurtlocker\Hurtlocker {
+  switch (strtolower($dbType)) {
+    case 'dao':
+      $db = new DaoDatabaseAdapter();
+      break;
+
+    case 'pdo':
+      $db = new PdoDatabaseAdapter();
+      break;
+
+    default:
+      throw new \RuntimeException("Unrecognized dbType: $dbType");
+  }
+
+  return new \Hurtlocker\Hurtlocker($db, $workerSeries);
 }
 
 /**
