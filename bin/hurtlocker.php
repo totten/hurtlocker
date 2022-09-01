@@ -4,6 +4,8 @@ namespace Hurtlocker;
 
 use PDO;
 
+require_once dirname(__DIR__) . '/vendor/autoload.php';
+
 class Hurtlocker {
 
   /**

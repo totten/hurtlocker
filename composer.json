@@ -1,0 +1,10 @@
+{
+  "name": "civicrm/hurtlocker",
+  "description": "Experiments in creating deadlocks and other forms of brain-hurting",
+  "license": "MIT",
+  "autoload": {
+    "psr-4": {
+      "Hurtlocker\\": "src/"
+    }
+  }
+}
