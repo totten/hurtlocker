@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 ## usage: hurtlocker.sh <dbapi> <worker-config>
 ## example: hurtlocker.sh PDO aaa
