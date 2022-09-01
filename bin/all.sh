@@ -18,7 +18,7 @@ PRJDIR=$(dirname "$BINDIR")
 
 for DBTYPE in dao pdo ; do
 for WORKERS in abcd-abcd-abcd abcd-abcd-bacd abcd-bacd-dcba ; do
-for N in 1 2 3 ; do
+for N in 1 ; do
   "$BINDIR"/hurtlocker.sh "$DBTYPE" "$WORKERS"
 done
 done

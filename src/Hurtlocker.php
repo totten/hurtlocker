@@ -23,7 +23,7 @@ class Hurtlocker {
    *
    * @var int
    */
-  public $trialCount = 2;
+  public $trialCount = 6;
 
   /**
    * Every $N seconds, we begin a new trial.
