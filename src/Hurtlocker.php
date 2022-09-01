@@ -4,6 +4,14 @@ namespace Hurtlocker;
 class Hurtlocker {
 
   /**
+   * The list of config options that describe the workers
+   *
+   * @var string
+   *   ex: 'aab' or 'abd'
+   */
+  public $workerSeries;
+
+  /**
    * Number of example records to put in the DB (during initialization).
    *
    * @var int
@@ -54,14 +62,6 @@ class Hurtlocker {
   protected $writeSequences;
 
   /**
-   * The list of config options that describe the workers
-   *
-   * @var string
-   *   ex: 'aab' or 'abd'
-   */
-  protected $workerSeries;
-
-  /**
    * @var DatabaseInterface
    */
   private $db;
@@ -73,33 +73,6 @@ class Hurtlocker {
     $this->writeSequences['b'] = ['tbl_b', 'tbl_a', 'tbl_c', 'tbl_d'];
     $this->writeSequences['c'] = ['tbl_c', 'tbl_a', 'tbl_b', 'tbl_d'];
     $this->writeSequences['d'] = ['tbl_d', 'tbl_c', 'tbl_b', 'tbl_a'];
-  }
-
-  public function main(string $stdin): int {
-    $tasks = explode(" ", trim($stdin));
-    foreach ($tasks as $task) {
-      $task = trim($task);
-
-      try {
-        $taskArgs = explode(":", $task);
-        $taskFunc = array_shift($taskArgs);
-        if (!is_callable([$this, $taskFunc])) {
-          throw new \RuntimeException("Invalid task: \"$task\"");
-        }
-
-        $this->activeTask = $task;
-        $this->{$taskFunc}(...$taskArgs);
-      }
-      catch (\Throwable $t) {
-        echo \CRM_Core_Error::formatTextException($t);
-        throw $t;
-      }
-      finally {
-        $this->activeTask = NULL;
-      }
-    }
-
-    return 0;
   }
 
   public function config(string $dbType, string $workerSeries): void {
@@ -134,6 +107,7 @@ class Hurtlocker {
   }
 
   public function worker($workerId): void {
+    $this->activeTask = "worker:$workerId:" . $this->workerSeries[$workerId - 1];
     $writeSeq = $this->getWorkerWriteSequence($workerId);
     $fieldName = "field_w{$workerId}";
 

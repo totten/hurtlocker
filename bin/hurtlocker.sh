@@ -23,9 +23,9 @@ PRJDIR=$(dirname "$BINDIR")
 ###############################################################################
 ## Utilities
 
-function do_hurtlocker() {
-  #./bin/cv.phar -v scr "$BINDIR"/hurtlocker.php
-  echo "$CONFIG" "$@" | cv -v scr "$BINDIR"/hurtlocker.php
+function do_cv() {
+  ## ../../bin/cv.phar -v "$@"
+  cv -v "$@"
 }
 
 ###############################################################################
@@ -36,24 +36,24 @@ if [ -z "$1" -o -z "$2" ]; then
   exit 1
 fi
 
-DB_API="$1"
-WORKERS="$2"
+export DB_API="$1"
+export WORKERS="$2"
 LOGDIR="$PRJDIR/log"
 TS=$(date '+%Y-%m-%d-%H-%M-%S')
 LOG="${LOGDIR}/${1}-${WORKERS}-${TS}.log"
 REPORT="${LOGDIR}/${1}-${WORKERS}-${TS}.report"
-CONFIG="config:$DB_API:$WORKERS"
+INSTANCE='hurtlocker(getenv("DB_API"),getenv("WORKERS"))'
 
 ###############################################################################
 ### Main
 trap "trap - SIGTERM && kill -- -$$" SIGINT SIGTERM EXIT
 mkdir -p "$LOGDIR"
 
-do_hurtlocker 'init' 2>&1 | tee -a "$LOG"
+do_cv ev "$INSTANCE->init();" 2>&1 | tee -a "$LOG"
 
-do_hurtlocker 'worker:1' 2>&1 | tee -a "$LOG" &
-do_hurtlocker 'worker:2' 2>&1 | tee -a "$LOG" &
-do_hurtlocker 'worker:3' 2>&1 | tee -a "$LOG" &
+do_cv ev "$INSTANCE->worker(1);" 2>&1 | tee -a "$LOG" &
+do_cv ev "$INSTANCE->worker(2);" 2>&1 | tee -a "$LOG" &
+do_cv ev "$INSTANCE->worker(3);" 2>&1 | tee -a "$LOG" &
 wait
 
-do_hurtlocker 'report' | tee "$REPORT"
+do_cv ev "$INSTANCE->report();" 2>&1 | tee "$REPORT"
